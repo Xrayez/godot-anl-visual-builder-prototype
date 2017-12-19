@@ -1,5 +1,7 @@
 extends Control
 
+const Function = preload("res://noise/Function.gd")
+
 var methods = []
 
 var selected_function = null
@@ -92,7 +94,7 @@ func _on_show_pressed():
 	
 func create_function(name, type = SLOT_TYPE_INDEX):
 	
-	var function = GraphNode.new()
+	var function = Function.new()
 	function.set_name(name)
 	function.title = name
 #	function.show_close = true
