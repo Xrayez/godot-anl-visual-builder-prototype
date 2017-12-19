@@ -9,6 +9,8 @@ enum SlotType {
 	SLOT_TYPE_VALUE
 }
 
+signal function_evaluated(noise)
+
 func _ready():
 	if ClassDB.class_exists("AnlNoise"):
 		# Retrieve all AnlNoise methods
@@ -23,16 +25,21 @@ func _ready():
 	$bench.connect("connection_request", self, "_on_connection_request")
 	$bench.connect("delete_nodes_request", self, "_on_delete_function_request")
 	$bench.connect("disconnection_request", self, "_on_disconnection_request")
+	$bench.connect("gui_input", self, "_on_bench_gui_input")
 	
 	$functions.connect("item_selected", self, "_on_function_item_selected")
 	
 	$add_value.connect("pressed", self, "_on_add_value_pressed")
-	$evaluate.connect("pressed", self, "_on_evaluate_pressed")
 	
 	$bench.set_right_disconnects(true)
 	
 	$bench.rect_size = get_viewport().size
 	$noise_image.rect_size = get_viewport().size
+		
+func _on_bench_gui_input(event):
+	if event is InputEventMouseButton:
+		if event.doubleclick and not $noise_image.visible:
+			evaluate()
 		
 func _on_function_selected(function):
 	selected_function = function
@@ -173,6 +180,6 @@ func evaluate():
 			# Resulting instruction index at selected function
 			index = evaluate_function(noise, selected_function.get_name())
 		
-	$noise_image.noise = noise
+	emit_signal("function_evaluated", noise)
 	return noise
 	

@@ -116,51 +116,7 @@ text = "Add value"
 flat = false
 align = 1
 
-[node name="evaluate" type="Button" parent="." index="5"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 802.0
-margin_top = 13.0
-margin_right = 895.0
-margin_bottom = 33.0
-rect_pivot_offset = Vector2( 0, 0 )
-mouse_filter = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = "Evaluate"
-flat = false
-align = 1
-
-[node name="show" type="Button" parent="." index="6"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 905.0
-margin_top = 13.0
-margin_right = 998.0
-margin_bottom = 33.0
-rect_pivot_offset = Vector2( 0, 0 )
-mouse_filter = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = "Show"
-flat = false
-align = 1
-
-[node name="noise_image" type="ViewportContainer" parent="." index="7"]
+[node name="noise_image" type="ViewportContainer" parent="." index="5"]
 
 editor/display_folded = true
 visible = false
