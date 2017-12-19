@@ -31,7 +31,7 @@ mouse_filter = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 
-[node name="index_function" type="Label" parent="." index="1"]
+[node name="function" type="Label" parent="." index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -39,13 +39,13 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 222.0
 margin_top = 16.0
-margin_right = 314.0
+margin_right = 282.0
 margin_bottom = 30.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 2
 size_flags_horizontal = 1
 size_flags_vertical = 4
-text = "Index function"
+text = "Function"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
@@ -56,9 +56,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 321.0
+margin_left = 290.0
 margin_top = 12.0
-margin_right = 455.0
+margin_right = 424.0
 margin_bottom = 32.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
@@ -73,50 +73,7 @@ align = 0
 selected = -1
 items = [  ]
 
-[node name="value" type="LineEdit" parent="." index="3"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 539.0
-margin_top = 10.0
-margin_right = 597.0
-margin_bottom = 34.0
-rect_pivot_offset = Vector2( 0, 0 )
-mouse_filter = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-text = "0.0"
-focus_mode = 2
-placeholder_alpha = 0.6
-caret_blink = false
-caret_blink_speed = 0.65
-context_menu_enabled = true
-
-[node name="add_value" type="Button" parent="." index="4"]
-
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 600.0
-margin_top = 12.0
-margin_right = 697.0
-margin_bottom = 32.0
-rect_pivot_offset = Vector2( 0, 0 )
-mouse_filter = 0
-size_flags_horizontal = 1
-size_flags_vertical = 1
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-group = null
-text = "Add value"
-flat = false
-align = 1
-
-[node name="clear" type="Button" parent="." index="5"]
+[node name="clear" type="Button" parent="." index="3"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -138,7 +95,7 @@ text = "Clear"
 flat = false
 align = 1
 
-[node name="noise_image" type="ViewportContainer" parent="." index="6"]
+[node name="noise_image" type="ViewportContainer" parent="." index="4"]
 
 editor/display_folded = true
 visible = false

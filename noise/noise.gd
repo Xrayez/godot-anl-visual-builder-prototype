@@ -6,11 +6,6 @@ var methods = []
 
 var selected_function = null
 
-enum SlotType {
-	SLOT_TYPE_INDEX,
-	SLOT_TYPE_VALUE
-}
-
 signal function_evaluated(noise)
 
 func _ready():
@@ -30,8 +25,6 @@ func _ready():
 	$bench.connect("gui_input", self, "_on_bench_gui_input")
 	
 	$functions.connect("item_selected", self, "_on_function_item_selected")
-	
-	$add_value.connect("pressed", self, "_on_add_value_pressed")
 	$clear.connect("pressed", self, "_on_clear_pressed")
 	
 	$bench.set_right_disconnects(true)
@@ -83,10 +76,6 @@ func _on_function_item_selected(id):
 	var function = create_function(name)
 	add_function(function)
 	
-func _on_add_value_pressed():
-	var function = create_function("value", SLOT_TYPE_VALUE)
-	add_function(function)
-	
 func _on_clear_pressed():
 	clear()
 	
@@ -107,9 +96,6 @@ func clear():
 func _on_evaluate_pressed():
 	evaluate()
 	
-func _on_show_pressed():
-	show_noise()
-	
 func create_function(name):
 	
 	var function = Function.new()
@@ -125,7 +111,6 @@ func create_function(name):
 
 func add_function(function):
 	$bench.add_child(function)
-#	function.connect("close_request", self, "_on_function_close_request")
 	
 func get_inputs(function):
 	var inputs = []
