@@ -110,93 +110,78 @@ func _on_evaluate_pressed():
 func _on_show_pressed():
 	show_noise()
 	
-func create_function(name, type = SLOT_TYPE_INDEX):
+func create_function(name):
 	
 	var function = Function.new()
-	function.set_name(name)
-	function.title = name
-#	function.show_close = true
+	function.set_function(name)
 	
-	match type:
-		SLOT_TYPE_INDEX:
-			for method in methods:
-				if method["name"] == function.get_name():
-					for arg in method["args"]:
-						add_param(function, true, arg["name"]) # set slot as input
-					add_param(function, false, "") # set last slot as output (return)
-		SLOT_TYPE_VALUE:
-			add_param(function, false, "value", $value.text, SLOT_TYPE_VALUE)
-			
+	for method in methods:
+		if method["name"] == name:
+			for arg in method["args"]:
+				function.add_arg(true, arg["name"]) # set slot as input
+			function.add_arg(false, "index") # set last slot as output (return)
+
 	return function
 
 func add_function(function):
 	$bench.add_child(function)
 #	function.connect("close_request", self, "_on_function_close_request")
 	
-func add_param(function, input, arg_name, arg_value=0.0, type=SLOT_TYPE_INDEX):
-
-	var input_color = Color(randf(), randf(), randf())
-	var output_color = Color(randf(), randf(), randf())
-	
-	function.set_slot(function.get_child_count(), 
-		input,     0, input_color,
-		not input, 0, output_color
-	)
-	var slot
-	match type:
-		SLOT_TYPE_INDEX:
-			slot = Label.new()
-			slot.text = arg_name
-		SLOT_TYPE_VALUE:
-			slot = LineEdit.new()
-			slot.text = str(arg_value)
-	function.add_child(slot)
-	
-func get_connectivity(function):
-	var froms = []
+func get_inputs(function):
+	var inputs = []
 	
 	var connections = $bench.get_connection_list()
 	for connection in connections:
 		var to = $bench.get_node(connection["to"])
 		if to == function:
-			froms.push_back( $bench.get_node(connection["from"]) )
+			inputs.push_back(connection)
 	
-	return froms
+	return inputs
 	
-func evaluate_function(noise, function_name):
+func get_input(function, idx):
 	
-	var function = $bench.get_node(function_name)
+	var input = null
+	
+	var connections = $bench.get_connection_list()
+	for connection in connections:
+		var to = $bench.get_node(connection["to"])
+		var to_port = connection["to_port"]
+		if to == function and to_port == idx:
+			input = $bench.get_node(connection["from"])
+			return input
+	
+func evaluate_function(noise, function):
+	
 	assert(function != null)
-	var inputs = get_connectivity(function)
-	var args = []
 	
-	for input in inputs:
-		var input_name = input.get_name()
-		if input_name.matchn("*value*"):
-			# Raw value, not function, no need to evaluate
-			var arg = float(input.get_child(0).text)
-			args.push_back(arg)
+	var args = []
+	var arg
+	
+	for idx in function.get_arg_count():
+		if function.is_arg_empty(idx):
+			var input_func = get_input(function, idx)
+			if input_func == null:
+				$bench.set_selected(input_func)
+				return null
+			arg = evaluate_function(noise, input_func)
 		else:
-			# Argument is a function, evaluate to get value
-			var func_name = input.get_name()
-			var placeholder_pos = func_name.rfind("@")
-			if placeholder_pos >= 0:
-				func_name = func_name.substr(1, placeholder_pos - 1)
-			var arg = evaluate_function(noise, func_name)
-			args.push_back(arg)
-			
+			arg = function.get_arg_value(idx)
+		args.push_back(arg)
+
 	# Instruction index evaluated
-	var index = noise.callv(function.get_name(), args)
-	assert(index != null)
+	var index = noise.callv(function.get_function(), args)
 	return index
 	
 func evaluate():
 	var noise = AnlNoise.new()
 	
+	var index
+	
 	if selected_function != null:
 		if selected_function.is_selected():
 			# Resulting instruction index at selected function
-			evaluate_function(noise, selected_function.get_name())
+			index = evaluate_function(noise, selected_function)
 		
-	emit_signal("function_evaluated", noise)
+	if index != null:
+		emit_signal("function_evaluated", noise)
 	
