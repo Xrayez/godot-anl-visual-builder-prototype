@@ -10,7 +10,7 @@ config_version=3
 
 [application]
 
-config/name="ANL Noise Graph"
+config/name="Noise Visual Builder"
 run/main_scene="res://noise/noise.tscn"
 config/icon="res://icon.png"
 
