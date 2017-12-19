@@ -151,6 +151,7 @@ func evaluate_function(noise, function_name):
 	var args = []
 	
 	for input in inputs:
+		print(input)
 		var input_name = input.get_name()
 		if input_name.matchn("*value*"):
 			# Raw value, not function, no need to evaluate
@@ -167,19 +168,16 @@ func evaluate_function(noise, function_name):
 			
 	# Instruction index evaluated
 	var index = noise.callv(function.get_name(), args)
+	assert(index != null)
 	return index
 	
 func evaluate():
-	
 	var noise = AnlNoise.new()
-	
-	var index = -1
 	
 	if selected_function != null:
 		if selected_function.is_selected():
 			# Resulting instruction index at selected function
-			index = evaluate_function(noise, selected_function.get_name())
+			evaluate_function(noise, selected_function.get_name())
 		
 	emit_signal("function_evaluated", noise)
-	return noise
 	
