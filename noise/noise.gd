@@ -32,6 +32,7 @@ func _ready():
 	$functions.connect("item_selected", self, "_on_function_item_selected")
 	
 	$add_value.connect("pressed", self, "_on_add_value_pressed")
+	$clear.connect("pressed", self, "_on_clear_pressed")
 	
 	$bench.set_right_disconnects(true)
 	
@@ -85,6 +86,23 @@ func _on_function_item_selected(id):
 func _on_add_value_pressed():
 	var function = create_function("value", SLOT_TYPE_VALUE)
 	add_function(function)
+	
+func _on_clear_pressed():
+	clear()
+	
+func clear():
+	selected_function = null
+	# Remove functions
+	for function in $bench.get_children():
+		if function is Function:
+			$bench.remove_child(function)
+			function.queue_free()
+	# Remove connections
+	for connection in $bench.get_connection_list():
+		$bench.disconnect_node(
+			connection["from"], connection["from_port"],
+			connection["to"], connection["to_port"]
+		)
 	
 func _on_evaluate_pressed():
 	evaluate()
@@ -153,7 +171,6 @@ func evaluate_function(noise, function_name):
 	var args = []
 	
 	for input in inputs:
-		print(input)
 		var input_name = input.get_name()
 		if input_name.matchn("*value*"):
 			# Raw value, not function, no need to evaluate
@@ -164,7 +181,7 @@ func evaluate_function(noise, function_name):
 			var func_name = input.get_name()
 			var placeholder_pos = func_name.rfind("@")
 			if placeholder_pos >= 0:
-				func_name = func_name.substr(1, func_name.rfind("@") - 1)
+				func_name = func_name.substr(1, placeholder_pos - 1)
 			var arg = evaluate_function(noise, func_name)
 			args.push_back(arg)
 			
