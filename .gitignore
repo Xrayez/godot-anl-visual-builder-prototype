@@ -1,0 +1,7 @@
+.vscode
+.fscache
+.import
+export.cfg
+export_presets.cfg
+
+*.psd
