@@ -14,6 +14,7 @@ func _ready():
 		# Retrieve all AnlNoise methods
 		methods = ClassDB.class_get_method_list("AnlNoise", true)
 
+	$functions.add_item("Select function")
 	for method in methods:
 		if method["return"]["type"] == TYPE_INT:
 			# Add functions that return Index
@@ -89,6 +90,8 @@ func _on_function_item_selected(id):
 	var function = create_function(name)
 	add_function(function)
 	pick_function(function)
+	
+	$functions.select(0)
 
 func _on_clear_pressed():
 	clear()
