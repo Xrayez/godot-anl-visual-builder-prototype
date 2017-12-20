@@ -48,8 +48,10 @@ func _on_connection_request( from, from_slot, to, to_slot ):
 	var connections = $bench.get_connection_list()
 	for connection in connections:
 		if connection["to"] == to and connection["to_port"] == to_slot:
-			# Port already has connection
-			return
+			if $bench.get_node(to).get_arg_type(to_slot) == Function.ARG_TYPE_VALUE:
+#				# Port already has connection
+#				# Allow more connections if input type is Function.ARG_TYPE_ARRAY
+				return
 	
 	$bench.connect_node(from, from_slot, to, to_slot)
 	
@@ -104,8 +106,13 @@ func create_function(name):
 	for method in methods:
 		if method["name"] == name:
 			for arg in method["args"]:
-				function.add_arg(true, arg["name"]) # set slot as input
-			function.add_arg(false, "index") # set last slot as output (return)
+				if arg["type"] == TYPE_REAL_ARRAY or arg["type"] == TYPE_INT_ARRAY:
+					function.add_arg(arg["name"], Function.ARG_TYPE_ARRAY)
+				else:
+					function.add_arg(arg["name"], Function.ARG_TYPE_VALUE)
+			function.add_arg("index", Function.ARG_TYPE_EMPTY, Function.ARG_TYPE_VALUE)
+			
+	print(function.get_arg_type(0))
 
 	return function
 
@@ -113,6 +120,7 @@ func add_function(function):
 	$bench.add_child(function)
 	
 func get_inputs(function):
+	
 	var inputs = []
 	
 	var connections = $bench.get_connection_list()
@@ -125,15 +133,17 @@ func get_inputs(function):
 	
 func get_input(function, idx):
 	
-	var input = null
+	var inputs = []
 	
 	var connections = $bench.get_connection_list()
 	for connection in connections:
 		var to = $bench.get_node(connection["to"])
 		var to_port = connection["to_port"]
 		if to == function and to_port == idx:
-			input = $bench.get_node(connection["from"])
-			return input
+			var input = $bench.get_node(connection["from"])
+			inputs.push_back(input)
+			
+	return inputs
 	
 func evaluate_function(noise, function):
 	
@@ -142,19 +152,32 @@ func evaluate_function(noise, function):
 	var args = []
 	var arg
 	
+	# Evaluate function with arguments
 	for idx in function.get_arg_count():
 		if function.is_arg_empty(idx):
-			var input_func = get_input(function, idx)
-			if input_func == null:
-				$bench.set_selected(input_func)
+			var input_funcs = get_input(function, idx)
+			if input_funcs.size() == 0:
+				$bench.set_selected(function)
 				return null
-			arg = evaluate_function(noise, input_func)
+			elif function.get_arg_type(idx) == Function.ARG_TYPE_ARRAY:
+				var array_args = []
+				for input in input_funcs:
+					arg = evaluate_function(noise, input)
+					array_args.push_back(arg)
+				args.push_back(array_args)
+			elif function.get_arg_type(idx) == Function.ARG_TYPE_VALUE:
+				arg = evaluate_function(noise, input_funcs[0])
+				args.push_back(arg)
 		else:
 			arg = function.get_arg_value(idx)
-		args.push_back(arg)
+			args.push_back(arg)
 
 	# Instruction index evaluated
-	var index = noise.callv(function.name, args)
+	var index
+	if args.size() > 0:
+		index = noise.callv(function.name, args)
+	else:
+		index = noise.call(function.name)
 	return index
 	
 func evaluate():
