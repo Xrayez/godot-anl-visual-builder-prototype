@@ -99,7 +99,7 @@ func _on_evaluate_pressed():
 func create_function(name):
 	
 	var function = Function.new()
-	function.set_function(name)
+	function.name = name
 	
 	for method in methods:
 		if method["name"] == name:
@@ -154,7 +154,7 @@ func evaluate_function(noise, function):
 		args.push_back(arg)
 
 	# Instruction index evaluated
-	var index = noise.callv(function.get_function(), args)
+	var index = noise.callv(function.name, args)
 	return index
 	
 func evaluate():

@@ -4,17 +4,17 @@ enum FunctionType {
 	FUNCTION_TYPE_INDEX
 }
 
-var function_name setget set_function, get_function
+var name setget set_function_name, get_function_name
 
 func _ready():
 	resizable = false
 	
-func set_function(name):
-	title = name
-	function_name = name
+func set_function_name(p_name):
+	title = p_name
+	name = p_name
 	
-func get_function():
-	return function_name
+func get_function_name():
+	return name
 
 func add_arg(input, arg, value = null):
 	
