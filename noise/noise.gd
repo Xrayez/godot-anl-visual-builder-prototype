@@ -60,8 +60,8 @@ func _on_connection_request( from, from_slot, to, to_slot ):
 	for connection in connections:
 		if connection["to"] == to and connection["to_port"] == to_slot:
 			if $bench.get_node(to).get_arg_type(to_slot) == Function.ARG_TYPE_VALUE:
-#				# Port already has connection
-#				# Allow more connections if input type is Function.ARG_TYPE_ARRAY
+				# Port already has connection
+				# Allow more connections if input type is Function.ARG_TYPE_ARRAY
 				return
 
 	$bench.connect_node(from, from_slot, to, to_slot)
@@ -98,10 +98,10 @@ func _on_clear_pressed():
 func clear():
 	selected = null
 	# Remove functions
-	for function in $bench.get_children():
-		if function is Function:
-			$bench.remove_child(function)
-			function.queue_free()
+	var functions = get_functions()
+	for function in functions:
+		$bench.remove_child(function)
+		function.queue_free()
 	# Remove connections
 	for connection in $bench.get_connection_list():
 		$bench.disconnect_node(
@@ -112,11 +112,21 @@ func clear():
 func _on_evaluate_pressed():
 	evaluate()
 	
+func get_functions():
+	var functions = []
+	
+	for function in $bench.get_children():
+		if function is Function:
+			functions.push_back(function)
+			
+	return functions
+	
 func get_selected_functions():
 	var selected = []
 	
-	for function in $bench.get_children():
-		if function is Function and function.is_selected():
+	var functions = get_functions()
+	for function in functions:
+		if function.is_selected():
 			selected.push_back(function)
 			
 	return selected
