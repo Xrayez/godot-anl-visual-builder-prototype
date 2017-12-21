@@ -31,10 +31,9 @@ func _ready():
 
 	$bench.set_right_disconnects(true)
 	$bench.set_use_snap(false)
-
 	$bench.rect_size = get_viewport().size
-	$noise_image.rect_size = get_viewport().size
 
+	$noise_image.rect_size = get_viewport().size
 
 func _process(delta):
 	if selected != null and drag_enabled:
@@ -42,8 +41,7 @@ func _process(delta):
 		
 func _input(event):
 	if event.is_action_pressed("place_function"):
-		if selected != null and drag_enabled:
-			drag_enabled = false
+		drag_enabled = false
 
 func _on_bench_gui_input(event):
 	if event is InputEventMouseButton:
@@ -91,7 +89,7 @@ func _on_function_item_selected(id):
 	var function = create_function(name)
 	add_function(function)
 	pick_function(function)
-	
+	# Reset to title
 	$functions.select(0)
 
 func _on_clear_pressed():
