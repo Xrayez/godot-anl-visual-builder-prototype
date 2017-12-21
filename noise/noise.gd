@@ -114,6 +114,15 @@ func clear():
 func _on_evaluate_pressed():
 	evaluate()
 	
+func get_selected_functions():
+	var selected = []
+	
+	for function in $bench.get_children():
+		if function is Function and function.is_selected():
+			selected.push_back(function)
+			
+	return selected
+	
 func select_function(function):
 	selected = function
 	$bench.set_selected(function)
