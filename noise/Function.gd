@@ -1,7 +1,6 @@
 extends GraphNode
 
 enum ArgType {
-	ARG_TYPE_EMPTY,
 	ARG_TYPE_VALUE,
 	ARG_TYPE_ARRAY
 }
@@ -43,7 +42,9 @@ func add_arg(arg_name, arg_type = ARG_TYPE_VALUE, connection_type = CONNECTION_I
 		slot = Label.new()
 		slot.align = Label.ALIGN_RIGHT
 		slot.text = str(arg_name)
+	slot.set_meta("arg_name", arg_name)
 	slot.set_meta("arg_type", arg_type)
+	slot.set_meta("connection_type", connection_type)
 	
 	add_child(slot)
 	
@@ -51,8 +52,10 @@ func get_arg_count():
 	return get_child_count() - 1
 	
 func get_arg_value(idx):
-	var value = float(get_child(idx).text)
-	return value
+	var arg = get_child(idx)
+	if arg.get_meta("connection_type") == CONNECTION_INPUT:
+		return float(arg.text)
+	return null
 	
 func get_arg_type(idx):
 	return get_child(idx).get_meta("arg_type")
@@ -60,13 +63,19 @@ func get_arg_type(idx):
 func is_arg_empty(idx):
 	return get_child(idx).text.empty()
 	
-#func save():
-#	var data = {
-#		filename = get_filename(),
-#		parent = get_parent().get_path(),
-#		name = get_function_name(),
-#		offset_x = get_offset().x,
-#		offset_y = get_offset().y,
-#
-#	}
-#	return data
+func save():
+	var function_data = {
+		name = get_function_name(),
+		offset_x = get_offset().x,
+		offset_y = get_offset().y
+	}
+	var args_data = []
+	for arg in get_children():
+		var arg_data = {
+			name = arg.get_meta("arg_name"),
+			type = arg.get_meta("arg_type"),
+			connection = arg.get_meta("connection_type")
+		}
+		args_data.push_back(arg_data)
+	function_data["args"] = args_data
+	return function_data

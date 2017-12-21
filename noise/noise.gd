@@ -27,6 +27,7 @@ func _ready():
 	$bench.connect("gui_input", self, "_on_bench_gui_input")
 
 	$functions.connect("item_selected", self, "_on_function_item_selected")
+	$save.connect("pressed", self, "_on_save_pressed")
 	$clear.connect("pressed", self, "_on_clear_pressed")
 
 	$bench.set_right_disconnects(true)
@@ -91,6 +92,9 @@ func _on_function_item_selected(id):
 	pick_function(function)
 	# Reset to title
 	$functions.select(0)
+
+func _on_save_pressed():
+	save()
 
 func _on_clear_pressed():
 	clear()
@@ -240,4 +244,7 @@ func save(selected_only = false):
 		functions = get_selected_functions()
 	else:
 		functions = get_functions()
+	
+	for function in functions:
+		print(function.save())
 	
