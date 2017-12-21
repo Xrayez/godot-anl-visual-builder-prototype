@@ -49,7 +49,6 @@ toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 group = null
-text = "Select function"
 flat = false
 align = 0
 selected = -1

@@ -30,6 +30,7 @@ func _ready():
 	$clear.connect("pressed", self, "_on_clear_pressed")
 
 	$bench.set_right_disconnects(true)
+	$bench.set_use_snap(false)
 
 	$bench.rect_size = get_viewport().size
 	$noise_image.rect_size = get_viewport().size
