@@ -149,11 +149,11 @@ func create_function(name):
 			for arg in method["args"]:
 				# Input
 				if arg["type"] == TYPE_REAL_ARRAY or arg["type"] == TYPE_INT_ARRAY:
-					function.add_arg(arg["name"], Function.ARG_TYPE_ARRAY)
+					function.add_arg(arg["name"], Function.ARG_TYPE_ARRAY, Function.CONNECTION_INPUT)
 				else:
-					function.add_arg(arg["name"], Function.ARG_TYPE_VALUE)
+					function.add_arg(arg["name"], Function.ARG_TYPE_VALUE, Function.CONNECTION_INPUT)
 			# Output
-			function.add_arg("index", Function.ARG_TYPE_EMPTY, Function.ARG_TYPE_VALUE)
+			function.add_arg("index", Function.ARG_TYPE_VALUE, Function.CONNECTION_OUTPUT)
 
 	return function
 
@@ -233,3 +233,11 @@ func evaluate():
 
 	if index != null:
 		emit_signal("function_evaluated", noise)
+
+func save(selected_only = false):
+	var functions = []
+	if selected_only:
+		functions = get_selected_functions()
+	else:
+		functions = get_functions()
+	
