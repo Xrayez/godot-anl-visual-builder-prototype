@@ -1,6 +1,12 @@
 extends Control
 
 const Function = preload("res://noise/Function.gd")
+const Parameter = preload("res://noise/Parameter.gd")
+
+var VALUE  = Parameter.PARAM_TYPE_VALUE
+var ARRAY  = Parameter.PARAM_TYPE_ARRAY
+var INPUT  = Parameter.CON_TYPE_INPUT
+var OUTPUT = Parameter.CON_TYPE_OUTPUT
 
 var methods = []
 
@@ -60,9 +66,9 @@ func _on_connection_request( from, from_slot, to, to_slot ):
 	var connections = $bench.get_connection_list()
 	for connection in connections:
 		if connection["to"] == to and connection["to_port"] == to_slot:
-			if $bench.get_node(to).get_arg_type(to_slot) == Function.ARG_TYPE_VALUE:
+			if $bench.get_node(to).get_parameter(to_slot).get_type() == VALUE:
 				# Port already has connection
-				# Allow more connections if input type is Function.ARG_TYPE_ARRAY
+				# Allow more connections if input type is ARRAY
 				return
 
 	$bench.connect_node(from, from_slot, to, to_slot)
@@ -147,18 +153,21 @@ func create_function(name):
 
 	var function = Function.new()
 	function.name = name
-
+	
 	for method in methods:
 		if method["name"] == name:
 			for arg in method["args"]:
 				# Input
 				if arg["type"] == TYPE_REAL_ARRAY or arg["type"] == TYPE_INT_ARRAY:
-					function.add_arg(arg["name"], Function.ARG_TYPE_ARRAY, Function.CONNECTION_INPUT)
+					var parameter = Parameter.new(arg["name"], ARRAY, INPUT)
+					function.add_parameter(parameter)
 				else:
-					function.add_arg(arg["name"], Function.ARG_TYPE_VALUE, Function.CONNECTION_INPUT)
+					var parameter = Parameter.new(arg["name"], VALUE, INPUT)
+					function.add_parameter(parameter)
 			# Output
-			function.add_arg("index", Function.ARG_TYPE_VALUE, Function.CONNECTION_OUTPUT)
-
+			var parameter = Parameter.new("index", VALUE, OUTPUT)
+			function.add_parameter(parameter)
+			
 	return function
 
 func add_function(function):
@@ -198,24 +207,26 @@ func evaluate_function(noise, function):
 	var arg
 
 	# Evaluate function with arguments
-	for idx in function.get_arg_count():
-		if function.is_arg_empty(idx):
-			var input_funcs = get_input(function, idx)
-			if input_funcs.size() == 0:
-				select_function(function)
-				return null
-			elif function.get_arg_type(idx) == Function.ARG_TYPE_ARRAY:
-				var array_args = []
-				for input in input_funcs:
-					arg = evaluate_function(noise, input)
-					array_args.push_back(arg)
-				args.push_back(array_args)
-			elif function.get_arg_type(idx) == Function.ARG_TYPE_VALUE:
-				arg = evaluate_function(noise, input_funcs[0])
+	for idx in function.get_parameter_count():
+		var parameter = function.get_parameter(idx)
+		if parameter.get_connection_type() == INPUT:
+			if parameter.is_empty():
+				var input_funcs = get_input(function, idx)
+				if input_funcs.size() == 0:
+					select_function(function)
+					return null
+				elif parameter.get_type() == ARRAY:
+					var array_args = []
+					for input in input_funcs:
+						arg = evaluate_function(noise, input)
+						array_args.push_back(arg)
+					args.push_back(array_args)
+				elif parameter.get_type() == VALUE:
+					arg = evaluate_function(noise, input_funcs[0])
+					args.push_back(arg)
+			else:
+				arg = parameter.get_value()
 				args.push_back(arg)
-		else:
-			arg = function.get_arg_value(idx)
-			args.push_back(arg)
 
 	# Instruction index evaluated
 	var index
