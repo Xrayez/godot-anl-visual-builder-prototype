@@ -1,6 +1,5 @@
 extends GraphNode
 
-
 var name setget set_name, get_name
 var component = null setget set_component, get_component
 
@@ -20,6 +19,9 @@ func set_component(p_component):
 		
 func get_component():
 	return component
+	
+func has_component():
+	return component != null
 	
 func add_parameter(parameter):
 	var color_input = Color(randf(), randf(), randf())

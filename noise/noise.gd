@@ -199,55 +199,53 @@ func get_function_input(function, idx):
 
 	return inputs
 
-func evaluate_function(noise, function):
-
+func evaluate_function(noise, function, args = []):
 	assert(function != null)
-
-	var args = []
-	var arg
-
-	# Evaluate function with arguments
-	for idx in function.get_parameter_count():
-		var parameter = function.get_parameter(idx)
-		if parameter.get_connection_type() == INPUT:
-			if parameter.is_empty():
-				var input_funcs = get_function_input(function, idx)
-				if input_funcs.size() == 0:
-					select_function(function)
-					return null
-				elif parameter.get_type() == ARRAY:
-					var array_args = []
-					for input in input_funcs:
-						arg = evaluate_function(noise, input)
-						array_args.push_back(arg)
-					args.push_back(array_args)
-				elif parameter.get_type() == VALUE:
-					arg = evaluate_function(noise, input_funcs[0])
+	
+	if args.empty():
+		var arg
+		# Evaluate function with arguments
+		for idx in function.get_parameter_count():
+			var parameter = function.get_parameter(idx)
+			if parameter.get_connection_type() == INPUT:
+				if parameter.is_empty():
+					var input_funcs = get_function_input(function, idx)
+					if input_funcs.size() == 0:
+						select_function(function)
+						return null
+					elif parameter.get_type() == ARRAY:
+						var array_args = []
+						for input in input_funcs:
+							arg = evaluate_function(noise, input)
+							array_args.push_back(arg)
+						args.push_back(array_args)
+					elif parameter.get_type() == VALUE:
+						arg = evaluate_function(noise, input_funcs[0])
+						args.push_back(arg)
+				else:
+					arg = parameter.get_value()
 					args.push_back(arg)
-			else:
-				arg = parameter.get_value()
-				args.push_back(arg)
-
-	# Instruction index evaluated
 	var index
-	if args.size() > 0:
-		index = noise.callv(function.name, args)
+	if function.has_component():
+		# Function has sub-functions
+		index = function.get_component().evaluate(args)
 	else:
-		index = noise.call(function.name)
+		# Raw function
+		index = noise.callv(function.name, args)
 	return index
 
-func evaluate():
+func evaluate(args = []):
 	var noise = AnlNoise.new()
 
 	var index
 
-	if selected != null:
-		if selected.is_selected():
-			# Resulting instruction index at selected function
-			index = evaluate_function(noise, selected)
+	if selected != null and selected.is_selected():
+		# Resulting instruction index at selected function
+		index = evaluate_function(noise, selected, args)
 
 	if index != null:
 		emit_signal("function_evaluated", noise)
+	return index
 
 func save(selected_only = false):
 	var functions = []
