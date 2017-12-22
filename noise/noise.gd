@@ -45,7 +45,7 @@ func _ready():
 func _process(delta):
 	if selected != null and drag_enabled:
 		selected.set_offset(get_global_mouse_position())
-		
+
 func _input(event):
 	if event.is_action_pressed("place_function"):
 		drag_enabled = false
@@ -121,26 +121,26 @@ func clear():
 
 func _on_evaluate_pressed():
 	evaluate()
-	
+
 func get_functions():
 	var functions = []
-	
+
 	for function in $bench.get_children():
 		if function is Function:
 			functions.push_back(function)
-			
+
 	return functions
-	
+
 func get_selected_functions():
 	var selected = []
-	
+
 	var functions = get_functions()
 	for function in functions:
 		if function.is_selected():
 			selected.push_back(function)
-			
+
 	return selected
-	
+
 func select_function(function):
 	selected = function
 	$bench.set_selected(function)
@@ -153,7 +153,7 @@ func create_function(name):
 
 	var function = Function.new()
 	function.name = name
-	
+
 	for method in methods:
 		if method["name"] == name:
 			for arg in method["args"]:
@@ -167,13 +167,13 @@ func create_function(name):
 			# Output
 			var parameter = Parameter.new("index", VALUE, OUTPUT)
 			function.add_parameter(parameter)
-			
+
 	return function
 
 func add_function(function):
 	$bench.add_child(function)
 
-func get_inputs(function):
+func get_function_inputs(function):
 
 	var inputs = []
 
@@ -185,7 +185,7 @@ func get_inputs(function):
 
 	return inputs
 
-func get_input(function, idx):
+func get_function_input(function, idx):
 
 	var inputs = []
 
@@ -211,7 +211,7 @@ func evaluate_function(noise, function):
 		var parameter = function.get_parameter(idx)
 		if parameter.get_connection_type() == INPUT:
 			if parameter.is_empty():
-				var input_funcs = get_input(function, idx)
+				var input_funcs = get_function_input(function, idx)
 				if input_funcs.size() == 0:
 					select_function(function)
 					return null
@@ -251,11 +251,20 @@ func evaluate():
 
 func save(selected_only = false):
 	var functions = []
-	if selected_only:
-		functions = get_selected_functions()
-	else:
-		functions = get_functions()
-	
+#	if selected_only:
+#		functions = get_selected_functions()
+#	else:
+	functions = get_functions()
+
+	var functions_data = []
 	for function in functions:
-		print(function.save())
-	
+		functions_data.push_back(function.save())
+
+	var connections_data = $bench.get_connection_list()
+
+	var data = {
+		functions = functions_data,
+		connections = connections_data,
+		selected = selected
+	}
+	return data
