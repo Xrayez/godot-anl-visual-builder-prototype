@@ -3,6 +3,8 @@ extends Control
 const Function = preload("res://noise/Function.gd")
 const Parameter = preload("res://noise/Parameter.gd")
 
+const EXTENSION = ".nvb"
+
 var VALUE  = Parameter.PARAM_TYPE_VALUE
 var ARRAY  = Parameter.PARAM_TYPE_ARRAY
 var INPUT  = Parameter.CON_TYPE_INPUT
@@ -25,21 +27,23 @@ func _ready():
 		if method["return"]["type"] == TYPE_INT:
 			# Add functions that return Index
 			$functions.add_item(method["name"])
-
+	
 	$bench.connect("node_selected", self, "_on_function_selected")
 	$bench.connect("connection_request", self, "_on_connection_request")
 	$bench.connect("delete_nodes_request", self, "_on_delete_function_request")
 	$bench.connect("disconnection_request", self, "_on_disconnection_request")
 	$bench.connect("gui_input", self, "_on_bench_gui_input")
-
-	$functions.connect("item_selected", self, "_on_function_item_selected")
-	$save.connect("pressed", self, "_on_save_pressed")
-	$load.connect("pressed", self, "_on_load_pressed")
-	$clear.connect("pressed", self, "_on_clear_pressed")
-
+	
 	$bench.set_right_disconnects(true)
 	$bench.set_use_snap(false)
 	$bench.rect_size = get_viewport().size
+
+	$functions.connect("item_selected", self, "_on_function_item_selected")
+	
+	$filename/save.connect("pressed", self, "_on_save_pressed")
+	$filename/load.connect("pressed", self, "_on_load_pressed")
+
+	$clear.connect("pressed", self, "_on_clear_pressed")
 
 	$noise_image.rect_size = get_viewport().size
 
@@ -67,7 +71,7 @@ func _on_connection_request( from, from_slot, to, to_slot ):
 	var connections = $bench.get_connection_list()
 	for connection in connections:
 		if connection["to"] == to and connection["to_port"] == to_slot:
-			if $bench.get_node(to).get_parameter(to_slot).get_type() == VALUE:
+			if $bench.get_node(to).get_parameter(to_slot).type == VALUE:
 				# Port already has connection
 				# Allow more connections if input type is ARRAY
 				return
@@ -102,10 +106,15 @@ func _on_function_item_selected(id):
 
 func _on_save_pressed():
 	var data = save_functions()
-	save_data(data)
+	var filename = $filename.text
+	if filename.is_valid_identifier():
+		save_data(data, filename)
 
 func _on_load_pressed():
-	load_functions()
+	var filename = $filename.text
+	if filename.is_valid_identifier():
+		var data = load_data(filename)
+		load_functions(data)
 
 func _on_clear_pressed():
 	clear()
@@ -176,7 +185,7 @@ func create_function(name):
 	return function
 
 func add_function(function):
-	$bench.add_child(function)
+	$bench.add_child(function, true)
 
 func get_function_inputs(function):
 
@@ -206,29 +215,29 @@ func get_function_input(function, idx):
 
 func evaluate_function(noise, function, args = []):
 	assert(function != null)
-	
+
 	if args.empty():
 		var arg
 		# Evaluate function with arguments
 		for idx in function.get_parameter_count():
 			var parameter = function.get_parameter(idx)
-			if parameter.get_connection_type() == INPUT:
+			if parameter.connection_type == INPUT:
 				if parameter.is_empty():
 					var input_funcs = get_function_input(function, idx)
 					if input_funcs.size() == 0:
 						select_function(function)
 						return null
-					elif parameter.get_type() == ARRAY:
+					elif parameter.type == ARRAY:
 						var array_args = []
 						for input in input_funcs:
 							arg = evaluate_function(noise, input)
 							array_args.push_back(arg)
 						args.push_back(array_args)
-					elif parameter.get_type() == VALUE:
+					elif parameter.type == VALUE:
 						arg = evaluate_function(noise, input_funcs[0])
 						args.push_back(arg)
 				else:
-					arg = parameter.get_value()
+					arg = parameter.value
 					args.push_back(arg)
 	var index
 	if function.has_component():
@@ -251,18 +260,16 @@ func evaluate(args = []):
 	if index != null:
 		emit_signal("function_evaluated", noise)
 	return index
-	
-func save_data(data):
+
+func save_data(data, filename):
 	var file = File.new()
-	file.open("res://functions.nvb", File.WRITE)
+	file.open(filename + EXTENSION, File.WRITE)
 	file.store_line(to_json(data))
 	file.close()
 
-func save_functions(selected_only = false):
+func save_functions():
 	var functions = []
-#	if selected_only:
-#		functions = get_selected_functions()
-#	else:
+
 	functions = get_functions()
 
 	var functions_data = []
@@ -277,23 +284,27 @@ func save_functions(selected_only = false):
 	}
 	return data
 	
-func load_functions():
-	clear()
+func load_data(filename):
 	var file = File.new()
-	file.open("res://functions.nvb", File.READ)
-	
+	file.open(filename + EXTENSION, File.READ)
 	var data = parse_json(file.get_line())
 	file.close()
+	return data
+
+func load_functions(data):
+	clear()
 	
 	var functions_data = data["functions"]
-	var connections_data = data["connections"]
-	
 	for f in functions_data:
 		var function = Function.new()
-		function.set_name(f["name"])
+		function.set_name(f["id"])
+		function.name = f["function_name"]
 		function.set_offset( Vector2(f["offset_x"], f["offset_y"]) )
 		for p in f["parameters"]:
 			var parameter = Parameter.new(p["name"], p["type"], p["connection_type"], p["value"])
 			function.add_parameter(parameter)
 		add_function(function)
-		
+
+	var connections_data = data["connections"]
+	for c in connections_data:
+		$bench.connect_node(c["from"], c["from_port"], c["to"], c["to_port"])

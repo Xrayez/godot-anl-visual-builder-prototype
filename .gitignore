@@ -5,3 +5,6 @@ export.cfg
 export_presets.cfg
 
 *.psd
+
+# Function files
+*.nvb
