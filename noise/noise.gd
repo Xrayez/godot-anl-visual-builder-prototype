@@ -237,8 +237,11 @@ func evaluate_function(noise, function, args = []):
 						arg = evaluate_function(noise, input_funcs[0])
 						args.push_back(arg)
 				else:
-					arg = parameter.value
-					args.push_back(arg)
+					arg = parameter.value.split_floats(",")
+					if arg.size() > 1:
+						args.push_back(arg)
+					elif arg.size() == 1:
+						args.push_back(arg[0])
 	var index
 	if function.has_component():
 		# Function has sub-functions

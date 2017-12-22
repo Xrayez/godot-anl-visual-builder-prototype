@@ -40,7 +40,7 @@ func get_parameter_name():
 
 func get_value():
 	if not is_empty():
-		return float(text)
+		return text
 	return null
 
 func get_type():
