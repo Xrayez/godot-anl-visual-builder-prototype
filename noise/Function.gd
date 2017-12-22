@@ -1,6 +1,8 @@
 extends GraphNode
 
+
 var name setget set_name, get_name
+var component = null setget set_component, get_component
 
 func _ready():
 	resizable = false
@@ -11,7 +13,14 @@ func set_name(p_name):
 	
 func get_name():
 	return name
-
+	
+func set_component(p_component):
+	if p_component is GraphEdit:
+		component = p_component
+		
+func get_component():
+	return component
+	
 func add_parameter(parameter):
 	var color_input = Color(randf(), randf(), randf())
 	var color_output = Color(randf(), randf(), randf())
