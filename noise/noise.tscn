@@ -60,9 +60,9 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 787.0
+margin_left = 688.0
 margin_top = 12.0
-margin_right = 884.0
+margin_right = 785.0
 margin_bottom = 32.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
@@ -76,7 +76,29 @@ text = "Save"
 flat = false
 align = 1
 
-[node name="clear" type="Button" parent="." index="3"]
+[node name="load" type="Button" parent="." index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 790.0
+margin_top = 12.0
+margin_right = 887.0
+margin_bottom = 32.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Load"
+flat = false
+align = 1
+
+[node name="clear" type="Button" parent="." index="4"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -98,7 +120,7 @@ text = "Clear"
 flat = false
 align = 1
 
-[node name="noise_image" type="ViewportContainer" parent="." index="4"]
+[node name="noise_image" type="ViewportContainer" parent="." index="5"]
 
 editor/display_folded = true
 visible = false

@@ -34,6 +34,7 @@ func _ready():
 
 	$functions.connect("item_selected", self, "_on_function_item_selected")
 	$save.connect("pressed", self, "_on_save_pressed")
+	$load.connect("pressed", self, "_on_load_pressed")
 	$clear.connect("pressed", self, "_on_clear_pressed")
 
 	$bench.set_right_disconnects(true)
@@ -102,6 +103,9 @@ func _on_function_item_selected(id):
 func _on_save_pressed():
 	var data = save_functions()
 	save_data(data)
+
+func _on_load_pressed():
+	load_functions()
 
 func _on_clear_pressed():
 	clear()
@@ -270,10 +274,26 @@ func save_functions(selected_only = false):
 	var data = {
 		functions = functions_data,
 		connections = connections_data,
-		selected = selected
 	}
 	return data
 	
 func load_functions():
 	clear()
+	var file = File.new()
+	file.open("res://functions.nvb", File.READ)
 	
+	var data = parse_json(file.get_line())
+	file.close()
+	
+	var functions_data = data["functions"]
+	var connections_data = data["connections"]
+	
+	for f in functions_data:
+		var function = Function.new()
+		function.set_name(f["name"])
+		function.set_offset( Vector2(f["offset_x"], f["offset_y"]) )
+		for p in f["parameters"]:
+			var parameter = Parameter.new(p["name"], p["type"], p["connection_type"], p["value"])
+			function.add_parameter(parameter)
+		add_function(function)
+		
