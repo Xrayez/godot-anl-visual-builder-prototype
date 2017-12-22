@@ -100,7 +100,8 @@ func _on_function_item_selected(id):
 	$functions.select(0)
 
 func _on_save_pressed():
-	save()
+	var data = save_functions()
+	save_data(data)
 
 func _on_clear_pressed():
 	clear()
@@ -246,8 +247,14 @@ func evaluate(args = []):
 	if index != null:
 		emit_signal("function_evaluated", noise)
 	return index
+	
+func save_data(data):
+	var file = File.new()
+	file.open("res://functions.nvb", File.WRITE)
+	file.store_line(to_json(data))
+	file.close()
 
-func save(selected_only = false):
+func save_functions(selected_only = false):
 	var functions = []
 #	if selected_only:
 #		functions = get_selected_functions()
@@ -266,3 +273,7 @@ func save(selected_only = false):
 		selected = selected
 	}
 	return data
+	
+func load_functions():
+	clear()
+	
