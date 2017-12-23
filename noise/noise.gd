@@ -68,7 +68,7 @@ func _on_load_pressed():
 		component.load_functions(data)
 
 func _on_clear_pressed():
-	clear()
+	component.clear()
 
 ################################################################################
 # Methods
