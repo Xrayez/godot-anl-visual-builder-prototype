@@ -8,8 +8,6 @@ var ARRAY  = Parameter.PARAM_TYPE_ARRAY
 var INPUT  = Parameter.CON_TYPE_INPUT
 var OUTPUT = Parameter.CON_TYPE_OUTPUT
 
-onready var workbench = get_parent()
-
 signal evaluated()
 
 var selected = null
@@ -75,7 +73,7 @@ func _on_delete_function_request():
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
-		if event.doubleclick and not workbench.get_node("image").visible:
+		if event.doubleclick:
 			evaluate()
 
 ################################################################################
@@ -163,7 +161,7 @@ func create_function(name):
 	var function = Function.new()
 	function.name = name
 	
-	var methods = workbench.get_methods()
+	var methods = Noise.get_methods()
 
 	for method in methods:
 		if method["name"] == name:
@@ -226,7 +224,7 @@ func clear():
 
 func save_data(data, filename):
 	var file = File.new()
-	file.open(filename + workbench.EXTENSION, File.WRITE)
+	file.open(filename + Config.EXTENSION, File.WRITE)
 	file.store_line(to_json(data))
 	file.close()
 
@@ -249,7 +247,7 @@ func save_functions():
 	
 func load_data(filename):
 	var file = File.new()
-	file.open(filename + workbench.EXTENSION, File.READ)
+	file.open(filename + Config.EXTENSION, File.READ)
 	var data = parse_json(file.get_line())
 	file.close()
 	return data

@@ -2,10 +2,7 @@ extends Control
 
 const Component = preload("res://noise/Component.gd")
 
-const EXTENSION = ".nvb"
-
 var component setget set_component, get_component
-var methods = [] setget , get_methods
 var drag_enabled = false setget set_drag_enabled, get_drag_enabled
 
 signal component_changed()
@@ -14,7 +11,13 @@ signal component_changed()
 # Callbacks
 ################################################################################
 func _ready():
-	retrieve_methods()
+	var methods = Noise.retrieve_methods()
+	
+	$functions.add_item("Select function")
+	for method in methods:
+		if method["return"]["type"] == TYPE_INT:
+			# Add functions that return Index (most are ints)
+			$functions.add_item(method["name"])
 	
 	$functions.connect("item_selected", self, "_on_function_item_selected")
 	$filename/save.connect("pressed", self, "_on_save_pressed")
@@ -28,18 +31,6 @@ func _ready():
 	add_child(component)
 	move_child(component, 0)
 	
-	
-func retrieve_methods(class_name = "AnlNoise"):
-	if ClassDB.class_exists(class_name):
-		# Retrieve all AnlNoise methods
-		methods = ClassDB.class_get_method_list(class_name, true)
-	
-	$functions.add_item("Select function")
-	for method in methods:
-		if method["return"]["type"] == TYPE_INT:
-			# Add functions that return Index
-			$functions.add_item(method["name"])
-			
 func _on_evaluate_pressed():
 	component.evaluate()
 	
@@ -78,9 +69,6 @@ func set_component(p_component):
 	
 func get_component():
 	return component
-	
-func get_methods():
-	return methods
 	
 func set_drag_enabled(is_enabled):
 	drag_enabled = is_enabled
