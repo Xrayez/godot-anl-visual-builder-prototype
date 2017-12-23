@@ -4,7 +4,6 @@ const Component = preload("res://noise/Component.gd")
 
 const EXTENSION = ".nvb"
 
-var noise = AnlNoise.new() setget , get_noise
 var component setget set_component, get_component
 var methods = [] setget , get_methods
 var drag_enabled = false setget set_drag_enabled, get_drag_enabled
@@ -73,9 +72,6 @@ func _on_clear_pressed():
 ################################################################################
 # Methods
 ################################################################################
-func get_noise():
-	return noise
-
 func set_component(p_component):
 	component = p_component
 	emit_signal("component_changed", p_component, component)

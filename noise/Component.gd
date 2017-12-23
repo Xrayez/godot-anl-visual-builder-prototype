@@ -116,7 +116,8 @@ func evaluate_function(noise, function, args = []):
 		index = function.get_component().evaluate(args)
 	else:
 		# Raw function
-		index = noise.callv(function.name, args)
+		index = Noise.get_noise().callv(function.name, args)
+	print(index)
 	return index
 
 func evaluate(args = []):
@@ -124,7 +125,7 @@ func evaluate(args = []):
 	
 	if selected != null and selected.is_selected():
 		# Resulting instruction index at selected function
-		index = evaluate_function(workbench.noise, selected, args)
+		index = evaluate_function(Noise.get_noise(), selected, args)
 		
 	if index != null:
 		emit_signal("evaluated")

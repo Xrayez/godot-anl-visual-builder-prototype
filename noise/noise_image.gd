@@ -3,7 +3,6 @@ extends ViewportContainer
 var texture = ImageTexture.new()
 
 onready var workbench = get_parent()
-onready var noise = workbench.noise
 
 onready var size = workbench.get_viewport().size
 onready var ratio = float(size.x) / size.y
@@ -22,7 +21,9 @@ func _on_component_changed(from, to):
 	to.connect("evaluated", self, "_on_evaluated")
 
 func _on_evaluated():
+	var noise = Noise.get_noise()
 	texture = noise.map_to_texture(size, noise.get_last_index(), AnlNoise.SEAMLESS_NONE, mapping_ranges)
+	Noise.reset_noise()
 	visible = true
 	update()
 	
