@@ -82,19 +82,19 @@ func _on_disconnection_request( from, from_slot, to, to_slot ):
 	$bench.disconnect_node(from, from_slot, to, to_slot)
 
 func _on_delete_function_request():
-	if selected != null:
-		if selected.is_selected():
-			var connections = $bench.get_connection_list()
-			for connection in connections:
-				var from = $bench.get_node(connection["from"])
-				var to = $bench.get_node(connection["to"])
-				if from == selected or to == selected:
-					$bench.disconnect_node(
-						connection["from"], connection["from_port"],
-						connection["to"], connection["to_port"]
-					)
-			$bench.remove_child(selected)
-			selected.queue_free()
+	var functions = get_selected_functions()
+	for selected in functions:
+		var connections = $bench.get_connection_list()
+		for connection in connections:
+			var from = $bench.get_node(connection["from"])
+			var to = $bench.get_node(connection["to"])
+			if from == selected or to == selected:
+				$bench.disconnect_node(
+					connection["from"], connection["from_port"],
+					connection["to"], connection["to_port"]
+				)
+		$bench.remove_child(selected)
+		selected.queue_free()
 
 func _on_function_item_selected(id):
 	var name = $functions.get_item_text(id)
