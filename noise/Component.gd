@@ -30,7 +30,7 @@ func _ready():
 	
 func _process(delta):
 	if selected != null and drag_enabled:
-		selected.set_offset(get_global_mouse_position())
+		selected.set_offset(get_scroll_ofs() + get_global_mouse_position())
 
 func _input(event):
 	if event.is_action_pressed("place_function"):
