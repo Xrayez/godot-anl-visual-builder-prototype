@@ -2,6 +2,7 @@ extends Control
 
 const Component = preload("res://noise/Component.gd")
 
+var base setget , get_base
 var component setget set_component, get_component
 var drag_enabled = false setget set_drag_enabled, get_drag_enabled
 
@@ -27,9 +28,8 @@ func _ready():
 	
 	# Make base component and add as a topmost child
 	component = Component.new()
+	base = component
 	set_component(component)
-	add_child(component)
-	move_child(component, 0)
 	
 func _on_evaluate_pressed():
 	component.evaluate()
@@ -63,9 +63,19 @@ func _on_clear_pressed():
 ################################################################################
 # Methods
 ################################################################################
+func get_base():
+	return base
+
 func set_component(p_component):
-	component = p_component
+	# Remove current component
+	if is_a_parent_of(component):
+		remove_child(component)
+	# Add new component
+	add_child(p_component)
+	move_child(p_component, 0)
+	
 	emit_signal("component_changed", p_component, component)
+	component = p_component
 	
 func get_component():
 	return component
