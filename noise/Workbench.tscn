@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://noise/Workbench.gd" type="Script" id=1]
-[ext_resource path="res://noise/noise_image.gd" type="Script" id=2]
+[ext_resource path="res://noise/Image.gd" type="Script" id=2]
 
 [node name="workbench" type="Control" index="0"]
 
