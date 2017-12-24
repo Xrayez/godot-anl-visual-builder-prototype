@@ -25,7 +25,6 @@ func _on_evaluated():
 	texture = noise.map_to_texture(size, noise.get_last_index(), AnlNoise.SEAMLESS_NONE, mapping_ranges)
 	Noise.reset_noise()
 	visible = true
-	update()
 	
 func _input(event):
 	if event is InputEventMouseButton:
