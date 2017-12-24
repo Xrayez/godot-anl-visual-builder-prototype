@@ -1,10 +1,12 @@
-.vscode
+# Godot
 .fscache
 .import
+*.import
 export.cfg
 export_presets.cfg
 
-*.psd
-
 # Function files
 *.nvb
+
+# Editors
+.vscode
