@@ -196,6 +196,25 @@ func get_function_params(function, idx):
 	
 	return params
 	
+func get_input_params(function):
+	
+	var parameters = []
+	
+	# Get left-most input parameters of the function
+	for idx in function.get_parameter_count():
+		var parameter = function.get_parameter(idx)
+		if parameter.connection_type == INPUT:
+			if parameter.is_empty():
+				var params = get_function_params(function, idx)
+				if params.size() == 0:
+					# Gather here
+					parameters.push_back(parameter)
+				else:
+					for param in params:
+						var input_params = get_input_params(param)
+						parameters.push_back(input_params)
+	return parameters
+	
 func clear():
 	selected = null
 	# Remove functions
