@@ -89,18 +89,18 @@ func evaluate_function(noise, function, args = []):
 			var parameter = function.get_parameter(idx)
 			if parameter.connection_type == INPUT:
 				if parameter.is_empty():
-					var input_funcs = get_function_input(function, idx)
-					if input_funcs.size() == 0:
+					var params = get_function_params(function, idx)
+					if params.size() == 0:
 						select_function(function)
 						return null
 					elif parameter.type == ARRAY:
 						var array_args = []
-						for input in input_funcs:
-							arg = evaluate_function(noise, input)
+						for param in params:
+							arg = evaluate_function(noise, param)
 							array_args.push_back(arg)
 						args.push_back(array_args)
 					elif parameter.type == VALUE:
-						arg = evaluate_function(noise, input_funcs[0])
+						arg = evaluate_function(noise, params[0])
 						args.push_back(arg)
 				else:
 					arg = parameter.value.split_floats(",")
@@ -182,31 +182,19 @@ func create_function(name):
 func add_function(function):
 	add_child(function, true)
 
-func get_function_inputs(function):
+func get_function_params(function, idx):
 	
-	var inputs = []
-	
-	var connections = get_connection_list()
-	for connection in connections:
-		var to = get_node(connection["to"])
-		if to == function:
-			inputs.push_back(connection)
-	
-	return inputs
-
-func get_function_input(function, idx):
-	
-	var inputs = []
+	var params = []
 	
 	var connections = get_connection_list()
 	for connection in connections:
 		var to = get_node(connection["to"])
 		var to_port = connection["to_port"]
 		if to == function and to_port == idx:
-			var input = get_node(connection["from"])
-			inputs.push_back(input)
+			var param = get_node(connection["from"])
+			params.push_back(param)
 	
-	return inputs
+	return params
 	
 func clear():
 	selected = null
