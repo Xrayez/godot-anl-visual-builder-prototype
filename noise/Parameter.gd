@@ -12,7 +12,7 @@ enum ConnectionType {
 var name setget , get_parameter_name
 var type setget , get_type
 var connection_type setget , get_connection_type
-var value setget , get_value
+var value setget set_value, get_value
 
 func _init(p_name, p_type = PARAM_TYPE_VALUE, p_connection_type = CON_TYPE_INPUT, p_value = null):
 
@@ -37,6 +37,9 @@ func _ready():
 
 func get_parameter_name():
 	return name
+	
+func set_value(p_text):
+	text = p_text
 
 func get_value():
 	if not is_empty():

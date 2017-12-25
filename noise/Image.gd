@@ -16,14 +16,19 @@ func _ready():
 	workbench.connect("component_changed", self, "_on_component_changed")
 	
 func _on_component_changed(from, to):
-	if from.is_connected("evaluated", self, "_on_evaluated"):
-		from.disconnect("evaluated", self, "_on_evaluated")
-	to.connect("evaluated", self, "_on_evaluated")
+	if from.is_connected("function_evaluated", self, "_on_function_evaluated"):
+		from.disconnect("function_evaluated", self, "_on_function_evaluated")
+	to.connect("function_evaluated", self, "_on_function_evaluated")
 
-func _on_evaluated():
+func _on_function_evaluated():
+	map()
+	show()
+	
+func map():
 	var noise = Noise.get_noise()
 	texture = noise.map_to_texture(size, noise.get_last_index(), AnlNoise.SEAMLESS_NONE, mapping_ranges)
-	Noise.reset_noise()
+	
+func show():
 	visible = true
 	
 func _input(event):

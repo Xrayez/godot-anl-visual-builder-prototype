@@ -41,6 +41,9 @@ func get_parameter(idx):
 
 func get_parameter_count():
 	return get_child_count()
+	
+func get_parameters():
+	return get_children()
 
 func save():
 	var function_data = {

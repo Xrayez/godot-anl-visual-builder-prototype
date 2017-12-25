@@ -8,8 +8,15 @@ var ARRAY  = Parameter.PARAM_TYPE_ARRAY
 var INPUT  = Parameter.CON_TYPE_INPUT
 var OUTPUT = Parameter.CON_TYPE_OUTPUT
 
-signal evaluated()
+enum Command {
+	MAKE_COMPONENT_FUNCTION,
+	SET_FUNCTION_AS_OUTPUT
+}
+signal function_evaluated()
 
+var popup_menu = PopupMenu.new()
+
+var output = null setget set_output_function, get_output_function
 var selected = null
 var drag_enabled = false
 ################################################################################
@@ -21,10 +28,16 @@ func _ready():
 	connect("disconnection_request", self, "_on_disconnection_request")
 	connect("delete_nodes_request", self, "_on_delete_function_request")
 	connect("gui_input", self, "_on_gui_input")
-
+	connect("popup_request", self, "_on_popup_request")
+	
 	set_right_disconnects(true)
 	set_use_snap(false)
 	rect_size = get_viewport().size
+	
+	popup_menu.add_item("Make component function")
+	popup_menu.add_item("Set function as output")
+	popup_menu.connect("id_pressed", self, "_on_menu_item_pressed")
+	add_child(popup_menu)
 	
 func _process(delta):
 	if selected != null and drag_enabled:
@@ -74,59 +87,88 @@ func _on_delete_function_request():
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.doubleclick:
-			evaluate()
+			var index = evaluate_function(selected)
+			if index: emit_signal("function_evaluated")
+			Noise.reset_noise()
+			
+func _on_popup_request(position):
+	popup_menu.rect_position = get_local_mouse_position()
+	popup_menu.popup()
+		
+func _on_menu_item_pressed(id):
+	match(id):
+		MAKE_COMPONENT_FUNCTION:
+			var function = Function.new()
+			function.component = self
+			function.name = "Component function"
+			
+			var params = get_input_params(selected)
+			for param in params:
+				var parameter = Parameter.new(
+					param.name, param.type, param.connection_type
+				)
+				function.add_parameter(parameter)
+			var output = Parameter.new("index", VALUE, OUTPUT)
+			function.add_parameter(output)
+			
+			add_function(function)
+			
+		SET_FUNCTION_AS_OUTPUT:
+			set_output_function(selected)
+
 
 ################################################################################
 # Methods
 ################################################################################
-func evaluate_function(noise, function, args = []):
+func evaluate_function(function):
 	assert(function != null)
-
-	if args.empty():
-		var arg
-		# Evaluate function with arguments
-		for idx in function.get_parameter_count():
-			var parameter = function.get_parameter(idx)
-			if parameter.connection_type == INPUT:
-				if parameter.is_empty():
-					var params = get_function_params(function, idx)
-					if params.size() == 0:
-						select_function(function)
-						return null
-					elif parameter.type == ARRAY:
-						var array_args = []
-						for param in params:
-							arg = evaluate_function(noise, param)
-							array_args.push_back(arg)
-						args.push_back(array_args)
-					elif parameter.type == VALUE:
-						arg = evaluate_function(noise, params[0])
-						args.push_back(arg)
-				else:
-					arg = parameter.value.split_floats(",")
-					if arg.size() > 1:
-						args.push_back(arg)
-					elif arg.size() == 1:
-						args.push_back(arg[0])
+		
+	var args = []
+	var arg
+	# Evaluate function with arguments
+	for idx in function.get_parameter_count():
+		var parameter = function.get_parameter(idx)
+		if parameter.connection_type == INPUT:
+			if parameter.is_empty():
+				var params = get_function_params(function, idx)
+				if params.size() == 0:
+					select_function(function)
+					return null
+				elif parameter.type == ARRAY:
+					var array_args = []
+					for param in params:
+						arg = evaluate_function(param)
+						array_args.push_back(arg)
+					args.push_back(array_args)
+				elif parameter.type == VALUE:
+					arg = evaluate_function(params[0])
+					args.push_back(arg)
+			else:
+				arg = parameter.value.split_floats(",")
+				if arg.size() > 1:
+					args.push_back(arg)
+				elif arg.size() == 1:
+					args.push_back(arg[0])
 	var index
 	if function.has_component():
-		# Function has sub-functions
-		index = function.get_component().evaluate(args)
+		# Function has sub-function
+		var component = function.get_component()
+		var output = component.get_output_function()
+		assert(output != null)
+		
+		var input_params = get_input_params(output)
+		print(input_params)
+		for idx in input_params.size():
+			input_params[idx].value = str(args[idx])
+			
+		index = evaluate_function(output)
+		# Reset input of the component
+		for idx in input_params.size():
+			input_params[idx].value = String()
 	else:
 		# Raw function
 		index = Noise.get_noise().callv(function.name, args)
-	print(index)
-	return index
-
-func evaluate(args = []):
-	var index
 	
-	if selected != null and selected.is_selected():
-		# Resulting instruction index at selected function
-		index = evaluate_function(Noise.get_noise(), selected, args)
-		
-	if index != null:
-		emit_signal("evaluated")
 	return index
 
 func get_functions():
@@ -181,8 +223,15 @@ func create_function(name):
 
 func add_function(function):
 	add_child(function, true)
+	
+func set_output_function(function):
+	output = function
+	
+func get_output_function():
+	return output
 
 func get_function_params(function, idx):
+	assert(function != null)
 	
 	var params = []
 	
@@ -197,22 +246,22 @@ func get_function_params(function, idx):
 	return params
 	
 func get_input_params(function):
+	assert(function != null)
 	
 	var parameters = []
 	
 	# Get left-most input parameters of the function
 	for idx in function.get_parameter_count():
 		var parameter = function.get_parameter(idx)
-		if parameter.connection_type == INPUT:
-			if parameter.is_empty():
-				var params = get_function_params(function, idx)
-				if params.size() == 0:
-					# Gather here
-					parameters.push_back(parameter)
-				else:
-					for param in params:
-						var input_params = get_input_params(param)
-						parameters.push_back(input_params)
+		if parameter.connection_type == INPUT and parameter.is_empty():
+			var params = get_function_params(function, idx)
+			if params.size() == 0:
+				parameters.push_back(parameter)
+			else:
+				for param in params:
+					var input_params = get_input_params(param)
+					for param in input_params:
+						parameters.push_back(param)
 	return parameters
 	
 func clear():
