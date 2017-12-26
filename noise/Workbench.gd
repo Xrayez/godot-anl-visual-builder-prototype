@@ -2,7 +2,8 @@ extends Control
 
 const Component = preload("res://noise/Component.gd")
 
-var base setget , get_base
+onready var size = get_viewport().size
+
 var component setget set_component, get_component
 var drag_enabled = false setget set_drag_enabled, get_drag_enabled
 
@@ -20,19 +21,19 @@ func _ready():
 			# Add functions that return Index (most are ints)
 			$functions.add_item(method["name"])
 	
+	$panel.rect_size = size
+	$components.rect_size = Vector2(size.x, size.y - $components.rect_position.y)
 	$functions.connect("item_selected", self, "_on_function_item_selected")
 	$filename/save.connect("pressed", self, "_on_save_pressed")
 	$filename/load.connect("pressed", self, "_on_load_pressed")
 	$clear.connect("pressed", self, "_on_clear_pressed")
 	$image.rect_size = get_viewport().size
 	
-	# Make base component and add as a topmost child
+	# Make new component
 	component = Component.new()
-	base = component
-	set_component(component)
-	
-func _on_evaluate_pressed():
-	component.evaluate()
+	component.set_name(Config.DEFAULT_COMPONENT_NAME)
+	component.name = Config.DEFAULT_COMPONENT_NAME
+	add_component(component)
 	
 ################################################################################
 # Events
@@ -63,22 +64,25 @@ func _on_clear_pressed():
 ################################################################################
 # Methods
 ################################################################################
-func get_base():
-	return base
-
 func set_component(p_component):
-	# Remove current component
+	var current = $components.get_current_tab_control()
+	current = p_component
+	
+func get_component():
+	var current = $components.get_current_tab_control()
+	return current
+	
+func add_component(p_component, activate = true):
 	if is_a_parent_of(component):
-		remove_child(component)
+		return
 	# Add new component
-	add_child(p_component)
-	move_child(p_component, 0)
+	$components.add_child(p_component)
 	
 	emit_signal("component_changed", p_component, component)
 	component = p_component
-	
-func get_component():
-	return component
+	# Set as current
+	if activate:
+		set_component(component)
 	
 func set_drag_enabled(is_enabled):
 	drag_enabled = is_enabled

@@ -17,7 +17,39 @@ size_flags_horizontal = 1
 size_flags_vertical = 1
 script = ExtResource( 1 )
 
-[node name="functions" type="OptionButton" parent="." index="0"]
+[node name="panel" type="Panel" parent="." index="0"]
+
+show_behind_parent = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1024.0
+margin_bottom = 600.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+_sections_unfolded = [ "Margin", "Visibility" ]
+
+[node name="components" type="TabContainer" parent="." index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 62.0
+margin_right = 1024.0
+margin_bottom = 600.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+tab_align = 0
+tabs_visible = true
+_sections_unfolded = [ "Grow Direction", "Margin" ]
+
+[node name="functions" type="OptionButton" parent="." index="2"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -40,7 +72,7 @@ align = 0
 selected = -1
 items = [  ]
 
-[node name="filename" type="LineEdit" parent="." index="1"]
+[node name="filename" type="LineEdit" parent="." index="3"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -106,7 +138,7 @@ text = "Load"
 flat = false
 align = 1
 
-[node name="clear" type="Button" parent="." index="2"]
+[node name="clear" type="Button" parent="." index="4"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -128,7 +160,7 @@ text = "Clear"
 flat = false
 align = 1
 
-[node name="popup_menu" type="PopupMenu" parent="." index="3"]
+[node name="popup_menu" type="PopupMenu" parent="." index="5"]
 
 visible = false
 anchor_left = 0.0
@@ -144,7 +176,7 @@ size_flags_vertical = 1
 popup_exclusive = false
 items = [ "Make component", null, false, false, false, -1, 0, null, "", false ]
 
-[node name="image" type="ViewportContainer" parent="." index="4"]
+[node name="image" type="ViewportContainer" parent="." index="6"]
 
 editor/display_folded = true
 visible = false

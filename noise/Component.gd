@@ -16,6 +16,7 @@ signal function_evaluated()
 
 var popup_menu = PopupMenu.new()
 
+var name setget set_component_name, get_component_name
 var output = null setget set_output_function, get_output_function
 var selected = null
 var drag_enabled = false
@@ -120,6 +121,12 @@ func _on_menu_item_pressed(id):
 ################################################################################
 # Methods
 ################################################################################
+func set_component_name(p_name):
+	name = p_name
+	
+func get_component_name():
+	return name
+
 func evaluate_function(function):
 	assert(function != null)
 		
