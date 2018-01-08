@@ -66,6 +66,7 @@ func _on_clear_pressed():
 ################################################################################
 func set_component(p_component):
 	var current = $components.get_current_tab_control()
+	emit_signal("component_changed", p_component, component)
 	current = p_component
 	
 func get_component():
@@ -78,7 +79,6 @@ func add_component(p_component, activate = true):
 	# Add new component
 	$components.add_child(p_component)
 	
-	emit_signal("component_changed", p_component, component)
 	component = p_component
 	# Set as current
 	if activate:
