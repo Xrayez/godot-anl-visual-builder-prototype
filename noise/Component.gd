@@ -287,7 +287,8 @@ func clear():
 
 func save_data(data, filename):
 	var file = File.new()
-	file.open(filename + Config.EXTENSION, File.WRITE)
+	var path = Config.FUNCTIONS_PATH + filename + Config.EXTENSION
+	file.open(path, File.WRITE)
 	file.store_line(to_json(data))
 	file.close()
 
@@ -310,12 +311,14 @@ func save_functions():
 	
 func load_data(filename):
 	var file = File.new()
-	file.open(filename + Config.EXTENSION, File.READ)
+	var path = Config.FUNCTIONS_PATH + filename + Config.EXTENSION	
+	file.open(path, File.READ)
 	var data = parse_json(file.get_line())
 	file.close()
 	return data
 
 func load_functions(data):
+	
 	clear()
 	
 	var functions_data = data["functions"]

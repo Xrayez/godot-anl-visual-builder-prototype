@@ -51,7 +51,7 @@ func map(image_size, mode):
 		var data = str(image_size.x) + "x" + str(image_size.y)
 		var extension = ".png"
 		var filename = base + "_" + data + extension
-		texture.get_data().save_png(filename)
+		texture.get_data().save_png(Config.IMAGES_PATH + filename)
 	
 func show():
 	visible = true

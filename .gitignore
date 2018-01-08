@@ -1,13 +1,15 @@
-# Godot
+# Godot project files
+
 .fscache
 .import
-*.import
 export.cfg
 export_presets.cfg
 
 # Function files and generated images
-*.nvb
-*.png
+
+user/functions/*.nvb
+user/images/*.png
+user/images/*.import
 
 # Editors
 .vscode
