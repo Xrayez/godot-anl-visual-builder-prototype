@@ -4,14 +4,6 @@ var texture = ImageTexture.new()
 
 onready var workbench = get_parent()
 
-onready var size = workbench.get_viewport().size
-onready var ratio = float(size.x) / size.y
-
-var x = 10
-var y = 10
-
-onready var mapping_ranges = Rect2(Vector2(), Vector2(1 * ratio, 1))
-
 func _ready():
 	workbench.connect("component_changed", self, "_on_component_changed")
 	
@@ -21,32 +13,47 @@ func _on_component_changed(from, to):
 	to.connect("function_evaluated", self, "_on_function_evaluated")
 
 func _on_function_evaluated():
+	var viewport_size = workbench.get_viewport().size
 	# Get image size
-	var width = int(workbench.get_node("width").text)
-	var height = int(workbench.get_node("height").text)
+	var image_width = int(workbench.get_node("params/width").text)
+	var image_height = int(workbench.get_node("params/height").text)
 	var image_size
-	if width and height:
-		image_size = Vector2(width, height)
+	if image_width and image_height:
+		image_size = Vector2(image_width, image_height)
 	else:
-		image_size = workbench.get_viewport().size
+		image_size = viewport_size
 		
 	# Get mapping mode
-	var is_pressed = workbench.get_node("seamless").pressed
+	var is_pressed = workbench.get_node("params/seamless").pressed
 	var mode
 	if is_pressed:
 		mode = AnlNoise.SEAMLESS_XY
 	else:
 		mode = AnlNoise.SEAMLESS_NONE
 		
+	# Get mapping ranges
+	var map_x = float(workbench.get_node("ranges/x").text)
+	var map_y = float(workbench.get_node("ranges/y").text)
+	var map_width = float(workbench.get_node("ranges/width").text)
+	var map_height = float(workbench.get_node("ranges/height").text)
+	
+	var mapping_ranges
+	is_pressed = workbench.get_node("params/keep_aspect").pressed
+	if is_pressed:
+		var ratio = float(image_size.x) / image_size.y
+		mapping_ranges = Rect2(map_x, map_y, map_width * ratio, map_height)
+	else:
+		mapping_ranges = Rect2(map_x, map_y, map_width, map_height)
+		
 	# Map and show the noise image
-	map(image_size, mode)
+	map(image_size, mode, mapping_ranges)
 	show()
 	
-func map(image_size, mode):
+func map(image_size, mode, mapping_ranges):
 	var noise = Noise.get_noise()
 	texture = noise.map_to_texture(image_size, noise.get_last_index(), mode, mapping_ranges)
 	
-	if workbench.get_node("save_to_file").pressed:
+	if workbench.get_node("params/save_to_file").pressed:
 		var base = workbench.get_node("filename").text
 		var data = str(image_size.x) + "x" + str(image_size.y)
 		var extension = ".png"

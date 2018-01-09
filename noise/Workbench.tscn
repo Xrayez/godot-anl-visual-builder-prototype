@@ -51,14 +51,15 @@ _sections_unfolded = [ "Grow Direction", "Margin" ]
 
 [node name="functions" type="OptionButton" parent="." index="2"]
 
+editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 16.0
-margin_top = 12.0
-margin_right = 150.0
-margin_bottom = 32.0
+margin_left = 9.0
+margin_top = 29.0
+margin_right = 143.0
+margin_bottom = 49.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 size_flags_horizontal = 1
@@ -73,16 +74,67 @@ align = 0
 selected = -1
 items = [  ]
 
-[node name="width" type="LineEdit" parent="." index="3"]
+[node name="label" type="Label" parent="functions" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = -20.0
+margin_right = 62.0
+margin_bottom = -6.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+text = "Functions"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="params" type="Control" parent="." index="3"]
+
+editor/display_folded = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="image" type="Label" parent="params" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 168.0
+margin_top = 9.0
+margin_right = 241.0
+margin_bottom = 23.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+text = "Image"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="width" type="LineEdit" parent="params" index="1"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 166.0
-margin_top = 10.0
+margin_top = 28.0
 margin_right = 256.0
-margin_bottom = 34.0
+margin_bottom = 52.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 size_flags_horizontal = 1
@@ -95,16 +147,16 @@ caret_blink_speed = 0.65
 context_menu_enabled = true
 _sections_unfolded = [ "Placeholder" ]
 
-[node name="height" type="LineEdit" parent="." index="4"]
+[node name="height" type="LineEdit" parent="params" index="2"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 166.0
-margin_top = 38.0
+margin_top = 56.0
 margin_right = 255.0
-margin_bottom = 62.0
+margin_bottom = 80.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 size_flags_horizontal = 1
@@ -117,16 +169,39 @@ caret_blink_speed = 0.65
 context_menu_enabled = true
 _sections_unfolded = [ "Placeholder" ]
 
-[node name="seamless" type="CheckBox" parent="." index="5"]
+[node name="keep_aspect" type="CheckBox" parent="params" index="3"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 270.0
-margin_top = 10.0
+margin_top = 9.0
 margin_right = 367.0
-margin_bottom = 34.0
+margin_bottom = 33.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+toggle_mode = true
+pressed = true
+enabled_focus_mode = 2
+shortcut = null
+group = null
+text = "Keep aspect"
+flat = false
+align = 1
+
+[node name="seamless" type="CheckBox" parent="params" index="4"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 270.0
+margin_top = 34.0
+margin_right = 367.0
+margin_bottom = 58.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 size_flags_horizontal = 1
@@ -139,16 +214,16 @@ text = "Seamless"
 flat = false
 align = 1
 
-[node name="save_to_file" type="CheckBox" parent="." index="6"]
+[node name="save_to_file" type="CheckBox" parent="params" index="5"]
 
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 270.0
-margin_top = 37.0
-margin_right = 368.0
-margin_bottom = 61.0
+margin_top = 60.0
+margin_right = 372.0
+margin_bottom = 84.0
 rect_pivot_offset = Vector2( 0, 0 )
 mouse_filter = 0
 size_flags_horizontal = 1
@@ -161,7 +236,133 @@ text = " Save to file"
 flat = false
 align = 1
 
-[node name="filename" type="LineEdit" parent="." index="7"]
+[node name="ranges" type="Control" parent="." index="4"]
+
+editor/display_folded = true
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 236.0
+margin_right = 276.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="ranges" type="Label" parent="ranges" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 168.0
+margin_top = 9.0
+margin_right = 268.0
+margin_bottom = 23.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 2
+size_flags_horizontal = 1
+size_flags_vertical = 4
+text = "Mapping ranges"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="x" type="LineEdit" parent="ranges" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 166.0
+margin_top = 28.0
+margin_right = 256.0
+margin_bottom = 52.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+text = "0"
+focus_mode = 2
+placeholder_text = "X"
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+context_menu_enabled = true
+_sections_unfolded = [ "Placeholder" ]
+
+[node name="y" type="LineEdit" parent="ranges" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 166.0
+margin_top = 55.0
+margin_right = 256.0
+margin_bottom = 79.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+text = "0"
+focus_mode = 2
+placeholder_text = "Y"
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+context_menu_enabled = true
+_sections_unfolded = [ "Placeholder" ]
+
+[node name="width" type="LineEdit" parent="ranges" index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 260.0
+margin_top = 28.0
+margin_right = 350.0
+margin_bottom = 52.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+text = "1"
+focus_mode = 2
+placeholder_text = "Width"
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+context_menu_enabled = true
+_sections_unfolded = [ "Placeholder" ]
+
+[node name="height" type="LineEdit" parent="ranges" index="4"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 260.0
+margin_top = 55.0
+margin_right = 349.0
+margin_bottom = 79.0
+rect_pivot_offset = Vector2( 0, 0 )
+mouse_filter = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+text = "1"
+focus_mode = 2
+placeholder_text = "Height"
+placeholder_alpha = 0.6
+caret_blink = false
+caret_blink_speed = 0.65
+context_menu_enabled = true
+_sections_unfolded = [ "Placeholder" ]
+
+[node name="filename" type="LineEdit" parent="." index="5"]
 
 editor/display_folded = true
 anchor_left = 0.0
@@ -227,7 +428,7 @@ text = "Load"
 flat = false
 align = 1
 
-[node name="clear" type="Button" parent="." index="8"]
+[node name="clear" type="Button" parent="." index="6"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -249,7 +450,7 @@ text = "Clear"
 flat = false
 align = 1
 
-[node name="popup_menu" type="PopupMenu" parent="." index="9"]
+[node name="popup_menu" type="PopupMenu" parent="." index="7"]
 
 visible = false
 anchor_left = 0.0
@@ -265,7 +466,7 @@ size_flags_vertical = 1
 popup_exclusive = false
 items = [ "Make component", null, false, false, false, -1, 0, null, "", false ]
 
-[node name="image" type="ViewportContainer" parent="." index="10"]
+[node name="image" type="ViewportContainer" parent="." index="8"]
 
 editor/display_folded = true
 visible = false
