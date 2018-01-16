@@ -31,16 +31,16 @@ func _ready():
 	
 	# Make new component
 	component = Component.new()
-	component.set_name(Config.DEFAULT_COMPONENT_NAME)
 	component.name = Config.DEFAULT_COMPONENT_NAME
+	component.component_name = Config.DEFAULT_COMPONENT_NAME
 	add_component(component)
 	
 ################################################################################
 # Events
 ################################################################################
 func _on_function_item_selected(id):
-	var name = $functions.get_item_text(id)
-	var function = component.create_function(name)
+	var selected_name = $functions.get_item_text(id)
+	var function = component.create_function(selected_name)
 	component.add_function(function)
 	component.pick_function(function)
 	# Reset to title
@@ -48,14 +48,14 @@ func _on_function_item_selected(id):
 
 func _on_save_pressed():
 	var data = component.save_functions()
-	var filename = $filename.text
-	if filename.is_valid_identifier():
-		component.save_data(data, filename)
+	var file_name = $filename.text
+	if file_name.is_valid_identifier():
+		component.save_data(data, file_name)
 
 func _on_load_pressed():
-	var filename = $filename.text
-	if filename.is_valid_identifier():
-		var data = component.load_data(filename)
+	var file_name = $filename.text
+	if file_name.is_valid_identifier():
+		var data = component.load_data(file_name)
 		component.load_functions(data)
 
 func _on_clear_pressed():

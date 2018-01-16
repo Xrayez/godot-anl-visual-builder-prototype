@@ -57,8 +57,8 @@ func map(image_size, mode, mapping_ranges):
 		var base = workbench.get_node("filename").text
 		var data = str(image_size.x) + "x" + str(image_size.y)
 		var extension = ".png"
-		var filename = base + "_" + data + extension
-		texture.get_data().save_png(Config.IMAGES_PATH + filename)
+		var file_name = base + "_" + data + extension
+		texture.get_data().save_png(Config.IMAGES_PATH + file_name)
 	
 func show():
 	visible = true

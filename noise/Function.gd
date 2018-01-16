@@ -1,6 +1,6 @@
 extends GraphNode
 
-var name setget set_function_name, get_function_name
+var function_name setget set_function_name, get_function_name
 var component = null setget set_component, get_component
 
 func _ready():
@@ -8,10 +8,10 @@ func _ready():
 
 func set_function_name(p_name):
 	title = p_name
-	name = p_name
+	function_name = p_name
 
 func get_function_name():
-	return name
+	return function_name
 
 func set_component(p_component):
 	if p_component is GraphEdit:
@@ -48,14 +48,14 @@ func get_parameters():
 func save():
 	var function_data = {
 		id = get_name(),
-		function_name = name,
+		function_name = function_name,
 		offset_x = get_offset().x,
 		offset_y = get_offset().y
 	}
 	var parameters_data = []
 	for parameter in get_children():
 		var parameter_data = {
-			name = parameter.name,
+			name = parameter.parameter_name,
 			type = parameter.type,
 			connection_type = parameter.connection_type,
 			value = parameter.value

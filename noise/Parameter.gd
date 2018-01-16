@@ -9,7 +9,7 @@ enum ConnectionType {
 	CON_TYPE_INPUT
 }
 
-var name setget , get_parameter_name
+var parameter_name setget , get_parameter_name
 var type setget , get_type
 var connection_type setget , get_connection_type
 var value setget set_value, get_value
@@ -28,7 +28,7 @@ func _init(p_name, p_type = PARAM_TYPE_VALUE, p_connection_type = CON_TYPE_INPUT
 		editable = false
 #		align = ALIGN_CENTER
 
-	name = p_name
+	parameter_name = p_name
 	type = p_type
 	connection_type = p_connection_type
 
@@ -36,7 +36,7 @@ func _ready():
 	expand_to_text_length = true
 
 func get_parameter_name():
-	return name
+	return parameter_name
 	
 func set_value(p_text):
 	text = p_text

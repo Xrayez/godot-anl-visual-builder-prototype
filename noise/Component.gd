@@ -16,7 +16,7 @@ signal function_evaluated()
 
 var popup_menu = PopupMenu.new()
 
-var name setget set_component_name, get_component_name
+var component_name setget set_component_name, get_component_name
 var output = null setget set_output_function, get_output_function
 var selected = null
 var drag_enabled = false
@@ -101,12 +101,12 @@ func _on_menu_item_pressed(id):
 		MAKE_COMPONENT_FUNCTION:
 			var function = Function.new()
 			function.component = self
-			function.name = "Component function"
+			function.function_name = "Component function"
 			
 			var params = get_input_params(selected)
 			for param in params:
 				var parameter = Parameter.new(
-					param.name, param.type, param.connection_type
+					param.parameter_name, param.type, param.connection_type
 				)
 				function.add_parameter(parameter)
 			var output = Parameter.new("index", VALUE, OUTPUT)
@@ -122,10 +122,10 @@ func _on_menu_item_pressed(id):
 # Methods
 ################################################################################
 func set_component_name(p_name):
-	name = p_name
+	component_name = p_name
 	
 func get_component_name():
-	return name
+	return component_name
 
 func evaluate_function(function):
 	assert(function != null)
@@ -174,7 +174,7 @@ func evaluate_function(function):
 			input_params[idx].value = String()
 	else:
 		# Raw function
-		index = Noise.get_noise().callv(function.name, args)
+		index = Noise.get_noise().callv(function.function_name, args)
 	
 	return index
 
@@ -205,15 +205,15 @@ func pick_function(function):
 	select_function(function)
 	drag_enabled = true
 
-func create_function(name):
+func create_function(p_name):
 
 	var function = Function.new()
-	function.name = name
+	function.function_name = p_name
 	
 	var methods = Noise.get_methods()
 
 	for method in methods:
-		if method["name"] == name:
+		if method["name"] == p_name:
 			for arg in method["args"]:
 				# Input
 				if arg["type"] == TYPE_REAL_ARRAY or arg["type"] == TYPE_INT_ARRAY:
@@ -285,9 +285,9 @@ func clear():
 			connection["to"], connection["to_port"]
 		)
 
-func save_data(data, filename):
+func save_data(data, file_name):
 	var file = File.new()
-	var path = Config.FUNCTIONS_PATH + filename + Config.EXTENSION
+	var path = Config.FUNCTIONS_PATH + file_name + Config.EXTENSION
 	file.open(path, File.WRITE)
 	file.store_line(to_json(data))
 	file.close()
@@ -309,9 +309,9 @@ func save_functions():
 	}
 	return data
 	
-func load_data(filename):
+func load_data(file_name):
 	var file = File.new()
-	var path = Config.FUNCTIONS_PATH + filename + Config.EXTENSION	
+	var path = Config.FUNCTIONS_PATH + file_name + Config.EXTENSION	
 	file.open(path, File.READ)
 	var data = parse_json(file.get_line())
 	file.close()
@@ -325,7 +325,7 @@ func load_functions(data):
 	for f in functions_data:
 		var function = Function.new()
 		function.set_name(f["id"])
-		function.name = f["function_name"]
+		function.function_name = f["function_name"]
 		function.set_offset( Vector2(f["offset_x"], f["offset_y"]) )
 		for p in f["parameters"]:
 			var parameter = Parameter.new(p["name"], p["type"], p["connection_type"], p["value"])
