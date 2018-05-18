@@ -2,8 +2,6 @@ extends Control
 
 const Component = preload("res://noise/Component.gd")
 
-onready var size = get_viewport().size
-
 var component setget set_component, get_component
 var drag_enabled = false setget set_drag_enabled, get_drag_enabled
 
@@ -13,6 +11,13 @@ signal component_changed()
 # Callbacks
 ################################################################################
 func _ready():
+	# Connect to signals
+	get_tree().get_root().connect("size_changed", self, "_on_size_changed")
+	$functions.connect("item_selected", self, "_on_function_item_selected")
+	$filename/save.connect("pressed", self, "_on_save_pressed")
+	$filename/load.connect("pressed", self, "_on_load_pressed")
+	$clear.connect("pressed", self, "_on_clear_pressed")
+	
 	var methods = Noise.retrieve_methods()
 	
 	$functions.add_item("Select function")
@@ -21,19 +26,22 @@ func _ready():
 			# Add functions that return Index (most are ints)
 			$functions.add_item(method["name"])
 	
-	$panel.rect_size = size
-	$components.rect_size = Vector2(size.x, size.y - $components.rect_position.y)
-	$functions.connect("item_selected", self, "_on_function_item_selected")
-	$filename/save.connect("pressed", self, "_on_save_pressed")
-	$filename/load.connect("pressed", self, "_on_load_pressed")
-	$clear.connect("pressed", self, "_on_clear_pressed")
-	$image.rect_size = get_viewport().size
-	
 	# Make new component
 	component = Component.new()
 	component.name = Config.DEFAULT_COMPONENT_NAME
 	component.component_name = Config.DEFAULT_COMPONENT_NAME
 	add_component(component)
+	
+	_resize_ui()
+	
+func _resize_ui():
+	var size = get_viewport().size
+	$panel.rect_size = size
+	$components.rect_size = Vector2(size.x, size.y - $components.rect_position.y)
+	$image.rect_size = size
+	
+func _on_size_changed():
+	_resize_ui()
 	
 ################################################################################
 # Events
