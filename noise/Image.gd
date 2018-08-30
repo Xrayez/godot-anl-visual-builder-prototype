@@ -8,11 +8,31 @@ func _ready():
 	workbench.connect("component_changed", self, "_on_component_changed")
 	
 func _on_component_changed(from, to):
+
 	if from.is_connected("function_evaluated", self, "_on_function_evaluated"):
 		from.disconnect("function_evaluated", self, "_on_function_evaluated")
 	to.connect("function_evaluated", self, "_on_function_evaluated")
 
+	if from.is_connected("node_selected", self, "_on_function_selected"):
+		from.disconnect("node_selected", self, "_on_function_selected")
+	to.connect("node_selected", self, "_on_function_selected")
+
 func _on_function_evaluated():
+
+	var params = _setup_image_params()
+	
+	# Map and show the noise image
+	map(params.image_size, params.mode, params.mapping_ranges)
+	show()
+
+
+func _on_function_selected(function):
+
+	var preview = workbench.get_node("params/seamless").pressed
+	# if preview:
+
+
+func _setup_image_params():
 	var viewport_size = workbench.get_viewport().size
 	# Get image size
 	var image_width = int(workbench.get_node("params/width").text)
@@ -44,10 +64,15 @@ func _on_function_evaluated():
 		mapping_ranges = Rect2(map_x, map_y, map_width * ratio, map_height)
 	else:
 		mapping_ranges = Rect2(map_x, map_y, map_width, map_height)
-		
-	# Map and show the noise image
-	map(image_size, mode, mapping_ranges)
-	show()
+
+	var params = {
+		image_size = image_size,
+		mode = mode,
+		mapping_ranges = mapping_ranges
+	}
+	
+	return params
+
 	
 func map(image_size, mode, mapping_ranges):
 	var noise = Noise.get_noise()
