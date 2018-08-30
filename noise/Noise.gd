@@ -12,10 +12,10 @@ func set_noise(p_noise):
 func get_noise():
 	return noise
 	
-func retrieve_methods(class_name = "AnlNoise"):
-	if ClassDB.class_exists(class_name):
+func retrieve_methods(class_signature = "AnlNoise"):
+	if ClassDB.class_exists(class_signature):
 		# Retrieve all AnlNoise methods
-		methods = ClassDB.class_get_method_list(class_name, true)
+		methods = ClassDB.class_get_method_list(class_signature, true)
 	return methods
 			
 func get_methods():
