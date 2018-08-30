@@ -1,5 +1,7 @@
 extends GraphNode
 
+signal value_changed()
+
 var function_name setget set_function_name, get_function_name
 var component = null setget set_component, get_component
 
@@ -35,6 +37,13 @@ func add_parameter(parameter):
 		output, 0, color_output
 	)
 	add_child(parameter)
+	parameter.connect("text_changed", self, "_on_parameter_changed")
+	
+	
+func _on_parameter_changed(text):
+	if not text.empty():
+		emit_signal("value_changed")
+	
 
 func get_parameter(idx):
 	return get_child(idx)

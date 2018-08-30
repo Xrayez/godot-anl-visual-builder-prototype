@@ -13,6 +13,7 @@ enum Command {
 	SET_FUNCTION_AS_OUTPUT
 }
 signal function_evaluated()
+signal function_value_changed()
 
 var popup_menu = PopupMenu.new()
 
@@ -116,6 +117,10 @@ func _on_menu_item_pressed(id):
 			
 		SET_FUNCTION_AS_OUTPUT:
 			set_output_function(selected)
+			
+			
+func _on_function_value_changed():
+	emit_signal("function_value_changed")
 
 
 ################################################################################
@@ -230,6 +235,7 @@ func create_function(p_name):
 
 func add_function(function):
 	add_child(function, true)
+	function.connect("value_changed", self, "_on_function_value_changed")
 	
 func set_output_function(function):
 	output = function

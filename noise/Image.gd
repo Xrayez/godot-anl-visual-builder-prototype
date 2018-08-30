@@ -16,8 +16,30 @@ func _on_component_changed(from, to):
 	if from.is_connected("node_selected", self, "_on_function_selected"):
 		from.disconnect("node_selected", self, "_on_function_selected")
 	to.connect("node_selected", self, "_on_function_selected")
+	
+	if from.is_connected("function_value_changed", self, "_on_function_value_changed"):
+		from.disconnect("function_value_changed", self, "_on_function_value_changed")
+	to.connect("function_value_changed", self, "_on_function_value_changed")
+	
+	
+func _on_function_selected(function):
+	_make_preview(function)
+	
+	
+func _on_function_value_changed():
+	var output = workbench.component.output
+	var selected = workbench.component.selected
+	
+	if output != null:
+		_make_preview(output)
+	elif selected != null:
+		_make_preview(selected)
+		
 
 func _on_function_evaluated():
+
+	if workbench.get_node("params/preview").pressed:
+		return
 
 	var params = _setup_image_params()
 	
@@ -25,12 +47,19 @@ func _on_function_evaluated():
 	map(params.image_size, params.mode, params.mapping_ranges)
 	show()
 
+	
+func _make_preview(function):
+	if workbench.get_node("params/preview").pressed:
 
-func _on_function_selected(function):
+		var params = _setup_image_params()
 
-	var preview = workbench.get_node("params/seamless").pressed
-	# if preview:
-
+		workbench.component.evaluate_function(function)
+		
+		# Map and show the noise image
+		map(params.image_size, params.mode, params.mapping_ranges)
+		hide()
+		show()
+		
 
 func _setup_image_params():
 	var viewport_size = workbench.get_viewport().size
@@ -94,5 +123,6 @@ func _input(event):
 			visible = false
 	
 func _draw():
-	draw_texture(texture, Vector2())
+	if texture != null:
+		draw_texture(texture, Vector2())
 	

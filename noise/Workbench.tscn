@@ -100,7 +100,6 @@ lines_skipped = 0
 max_lines_visible = -1
 
 [node name="params" type="Control" parent="." index="3"]
-editor/display_folded = true
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -150,6 +149,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 1
 size_flags_horizontal = 1
 size_flags_vertical = 1
+text = "512"
 secret_character = "*"
 focus_mode = 2
 context_menu_enabled = true
@@ -176,6 +176,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 1
 size_flags_horizontal = 1
 size_flags_vertical = 1
+text = "512"
 secret_character = "*"
 focus_mode = 2
 context_menu_enabled = true
@@ -259,7 +260,7 @@ text = " Save to file"
 flat = false
 align = 1
 
-[node name="enable_preview" type="CheckBox" parent="params" index="6"]
+[node name="preview" type="CheckBox" parent="params" index="6"]
 anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
@@ -276,7 +277,6 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
 toggle_mode = true
-pressed = true
 enabled_focus_mode = 2
 shortcut = null
 group = null
@@ -547,7 +547,6 @@ hide_on_state_item_selection = false
 submenu_popup_delay = 0.3
 
 [node name="image" type="ViewportContainer" parent="." index="8"]
-editor/display_folded = true
 visible = false
 anchor_left = 0.0
 anchor_top = 0.0
@@ -561,7 +560,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-stretch = true
+stretch = false
 stretch_shrink = 1
 script = ExtResource( 2 )
 _sections_unfolded = [ "Anchor", "Margin" ]
@@ -571,7 +570,7 @@ arvr = false
 size = Vector2( 40, 40 )
 own_world = false
 world = null
-transparent_bg = false
+transparent_bg = true
 msaa = 0
 hdr = false
 disable_3d = false
@@ -591,4 +590,5 @@ shadow_atlas_quad_0 = 2
 shadow_atlas_quad_1 = 2
 shadow_atlas_quad_2 = 3
 shadow_atlas_quad_3 = 4
+_sections_unfolded = [ "Gui" ]
 

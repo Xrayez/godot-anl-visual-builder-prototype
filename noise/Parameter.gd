@@ -20,17 +20,18 @@ func _init(p_name, p_type = PARAM_TYPE_VALUE, p_connection_type = CON_TYPE_INPUT
 	var output = not input
 
 	placeholder_text = str(p_name)
-	if p_value: text = str(p_value)
+	if p_value: 
+		text = str(p_value)
 
 	if input:
 		editable = true
 	if output:
 		editable = false
-#		align = ALIGN_CENTER
 
 	parameter_name = p_name
 	type = p_type
 	connection_type = p_connection_type
+	
 
 func _ready():
 	expand_to_text_length = true
