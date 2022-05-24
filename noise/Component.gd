@@ -3,10 +3,10 @@ extends GraphEdit
 const Function = preload("res://noise/Function.gd")
 const Parameter = preload("res://noise/Parameter.gd")
 
-var VALUE  = Parameter.PARAM_TYPE_VALUE
-var ARRAY  = Parameter.PARAM_TYPE_ARRAY
-var INPUT  = Parameter.CON_TYPE_INPUT
-var OUTPUT = Parameter.CON_TYPE_OUTPUT
+var VALUE  = Parameter.ParamType.PARAM_TYPE_VALUE
+var ARRAY  = Parameter.ParamType.PARAM_TYPE_ARRAY
+var INPUT  = Parameter.ConnectionType.CON_TYPE_INPUT
+var OUTPUT = Parameter.ConnectionType.CON_TYPE_OUTPUT
 
 enum Command {
 	MAKE_COMPONENT_FUNCTION,
@@ -31,16 +31,16 @@ func _ready():
 	connect("delete_nodes_request", self, "_on_delete_function_request")
 	connect("gui_input", self, "_on_gui_input")
 	connect("popup_request", self, "_on_popup_request")
-	
+
 	set_right_disconnects(true)
 	set_use_snap(false)
 	rect_size = get_viewport().size
-	
+
 	popup_menu.add_item("Make component function")
 	popup_menu.add_item("Set function as output")
 	popup_menu.connect("id_pressed", self, "_on_menu_item_pressed")
 	add_child(popup_menu)
-	
+
 func _process(delta):
 	if selected != null and drag_enabled:
 		selected.set_offset(get_scroll_ofs() + get_global_mouse_position())
@@ -92,18 +92,18 @@ func _on_gui_input(event):
 			var index = evaluate_function(selected)
 			if index: emit_signal("function_evaluated")
 			Noise.reset_noise()
-			
+
 func _on_popup_request(position):
 	popup_menu.rect_position = get_local_mouse_position()
 	popup_menu.popup()
-		
+
 func _on_menu_item_pressed(id):
 	match(id):
-		MAKE_COMPONENT_FUNCTION:
+		Command.MAKE_COMPONENT_FUNCTION:
 			var function = Function.new()
 			function.component = self
 			function.function_name = "Component function"
-			
+
 			var params = get_input_params(selected)
 			for param in params:
 				var parameter = Parameter.new(
@@ -112,13 +112,13 @@ func _on_menu_item_pressed(id):
 				function.add_parameter(parameter)
 			var output = Parameter.new("index", VALUE, OUTPUT)
 			function.add_parameter(output)
-			
+
 			add_function(function)
-			
-		SET_FUNCTION_AS_OUTPUT:
+
+		Command.SET_FUNCTION_AS_OUTPUT:
 			set_output_function(selected)
-			
-			
+
+
 func _on_function_value_changed():
 	emit_signal("function_value_changed")
 
@@ -128,13 +128,13 @@ func _on_function_value_changed():
 ################################################################################
 func set_component_name(p_name):
 	component_name = p_name
-	
+
 func get_component_name():
 	return component_name
 
 func evaluate_function(function):
 	assert(function != null)
-		
+
 	var args = []
 	var arg
 	# Evaluate function with arguments
@@ -167,12 +167,12 @@ func evaluate_function(function):
 		var component = function.get_component()
 		var output = component.get_output_function()
 		assert(output != null)
-		
+
 		var input_params = get_input_params(output)
 		print(input_params)
 		for idx in input_params.size():
 			input_params[idx].value = str(args[idx])
-			
+
 		index = evaluate_function(output)
 		# Reset input of the component
 		for idx in input_params.size():
@@ -180,7 +180,7 @@ func evaluate_function(function):
 	else:
 		# Raw function
 		index = Noise.get_noise().callv(function.function_name, args)
-	
+
 	return index
 
 func get_functions():
@@ -214,7 +214,7 @@ func create_function(p_name):
 
 	var function = Function.new()
 	function.function_name = p_name
-	
+
 	var methods = Noise.get_methods()
 
 	for method in methods:
@@ -236,18 +236,18 @@ func create_function(p_name):
 func add_function(function):
 	add_child(function, true)
 	function.connect("value_changed", self, "_on_function_value_changed")
-	
+
 func set_output_function(function):
 	output = function
-	
+
 func get_output_function():
 	return output
 
 func get_function_params(function, idx):
 	assert(function != null)
-	
+
 	var params = []
-	
+
 	var connections = get_connection_list()
 	for connection in connections:
 		var to = get_node(connection["to"])
@@ -255,14 +255,14 @@ func get_function_params(function, idx):
 		if to == function and to_port == idx:
 			var param = get_node(connection["from"])
 			params.push_back(param)
-	
+
 	return params
-	
+
 func get_input_params(function):
 	assert(function != null)
-	
+
 	var parameters = []
-	
+
 	# Get left-most input parameters of the function
 	for idx in function.get_parameter_count():
 		var parameter = function.get_parameter(idx)
@@ -276,7 +276,7 @@ func get_input_params(function):
 					for param in input_params:
 						parameters.push_back(param)
 	return parameters
-	
+
 func clear():
 	selected = null
 	# Remove functions
@@ -314,19 +314,19 @@ func save_functions():
 		connections = connections_data,
 	}
 	return data
-	
+
 func load_data(file_name):
 	var file = File.new()
-	var path = Config.FUNCTIONS_PATH + file_name + Config.EXTENSION	
+	var path = Config.FUNCTIONS_PATH + file_name + Config.EXTENSION
 	file.open(path, File.READ)
 	var data = parse_json(file.get_line())
 	file.close()
 	return data
 
 func load_functions(data):
-	
+
 	clear()
-	
+
 	var functions_data = data["functions"]
 	for f in functions_data:
 		var function = Function.new()

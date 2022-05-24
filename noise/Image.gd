@@ -76,9 +76,9 @@ func _setup_image_params():
 	var is_pressed = workbench.get_node("params/seamless").pressed
 	var mode
 	if is_pressed:
-		mode = AnlNoise.SEAMLESS_XY
+		mode = AccidentalNoise.SEAMLESS_XY
 	else:
-		mode = AnlNoise.SEAMLESS_NONE
+		mode = AccidentalNoise.SEAMLESS_NONE
 		
 	# Get mapping ranges
 	var map_x = float(workbench.get_node("ranges/x").text)
@@ -105,7 +105,9 @@ func _setup_image_params():
 	
 func map(image_size, mode, mapping_ranges):
 	var noise = Noise.get_noise()
-	texture = noise.map_to_texture(image_size, noise.get_last_index(), mode, mapping_ranges)
+	noise.function = noise.last_function
+	noise.format = AccidentalNoise.FORMAT_TEXTURE
+	texture = noise.get_texture(image_size.x, image_size.y)
 	
 	if workbench.get_node("params/save_to_file").pressed:
 		var base = workbench.get_node("filename").text

@@ -14,9 +14,9 @@ var type setget , get_type
 var connection_type setget , get_connection_type
 var value setget set_value, get_value
 
-func _init(p_name, p_type = PARAM_TYPE_VALUE, p_connection_type = CON_TYPE_INPUT, p_value = null):
+func _init(p_name, p_type = ParamType.PARAM_TYPE_VALUE, p_connection_type = ConnectionType.CON_TYPE_INPUT, p_value = null):
 
-	var input = p_connection_type == CON_TYPE_INPUT
+	var input = p_connection_type == ConnectionType.CON_TYPE_INPUT
 	var output = not input
 
 	placeholder_text = str(p_name)
